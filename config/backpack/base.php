@@ -12,28 +12,29 @@ return [
     */
 
     // Project name. Shown in the breadcrumbs and a few other places.
-    'project_name' => 'Backpack',
+    'project_name' => 'FastRabbit',
 
     // Menu logos
-    'logo_lg'   => '<b>Back</b>pack',
-    'logo_mini' => '<b>B</b>p',
+    'logo_lg'   => '<img src="/images/FastRabbit.png" width="30px" style="margin-bottom: 5px;"/>
+                    <b> Fast</b>Rabbit',
+    'logo_mini' => '<img src="/images/FastRabbit.png" width="30px" style="margin-bottom: 5px;"/>',
 
     // Developer or company name. Shown in footer.
-    'developer_name' => 'Cristian Tabacitu',
+    'developer_name' => 'Jeff Hsiu',
 
     // Developer website. Link in footer.
-    'developer_link' => 'http://tabacitu.ro',
+    'developer_link' => 'http://www.jeffhsiu.com',
 
     // Show powered by Laravel Backpack in the footer?
     'show_powered_by' => true,
 
     // The AdminLTE skin. Affects menu color and primary/secondary colors used throughout the application.
-    'skin' => 'skin-purple',
+    'skin' => 'skin-black',
     // Options: skin-black, skin-blue, skin-purple, skin-red, skin-yellow, skin-green, skin-blue-light, skin-black-light, skin-purple-light, skin-green-light, skin-red-light, skin-yellow-light
 
     // Date & Datetime Format Syntax: https://carbon.nesbot.com/docs/#api-localization
-    'default_date_format'     => 'D MMM YYYY',
-    'default_datetime_format' => 'D MMM YYYY, HH:mm',
+    'default_date_format'     => 'YYYY MMM D',
+    'default_datetime_format' => 'YYYY MMM D, HH:mm',
 
     // Content of the HTML meta robots tag to prevent indexing and link following
     'meta_robots_content' => 'noindex, nofollow',
