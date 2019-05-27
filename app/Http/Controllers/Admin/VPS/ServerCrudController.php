@@ -59,7 +59,7 @@ class ServerCrudController extends CrudController
             [
                 'name' => "end_date", // The db column name
                 'label' => "Rend Due Date", // Table column heading
-                'type' => "datetime",
+                'type' => "datetime-null",
                 'format' => 'YYYY-MM-DD', // use something else than the base.default_datetime_format config value
             ],
         ]);
@@ -206,15 +206,27 @@ class ServerCrudController extends CrudController
         return $redirect_location;
     }
 
+    /**
+     * 伺服器狀態頁
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @author Jeff Lin
+     */
     public function stats(Request $request)
     {
         $server = Server::find($request->server_id);
+        if ( !$server) {
+            Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
+            return redirect()->back();
+        }
         $username = 'root';
         $password = $server->ssh_pwd;
         $ip = $server->ip;
         $port = $server->ssh_port;
         $data = array();
         $data['ip'] = $ip;
+        $data['server_id'] = $server->id;
 
         try {
             $connection = ssh2_connect($ip, $port);
@@ -241,13 +253,36 @@ class ServerCrudController extends CrudController
         foreach ($docker_ps as $key => $value) {
             if ($key >= 1 && !empty($value)) {
                 $ps = array_values(array_filter(explode(' ', $value)));
-                $docker = array(
-                    'container_id' => $ps[0],
-                    'created' => $ps[4].' '.$ps[5].' '.$ps[6],
-                    'status' => $ps[7].' '.$ps[8].' '.$ps[9],
-                    'port' => substr($ps[10], 8, 4),
-                    'name' => $ps[11],
-                );
+                if ($ps[7] == 'Up' OR $ps[8] == 'Up') {  //Docker啟用狀態
+                    $status = '';
+                    $i = 7;
+                    while($i != (count($ps)-2)) {
+                        $status .= $ps[$i].' ';
+                        $i++;
+                    }
+                    $docker = array(
+                        'container_id' => $ps[0],
+                        'created' => $ps[4].' '.$ps[5].' '.$ps[6],
+                        'status' => $status,
+                        'port' => substr($ps[$i], 8, 4),
+                        'name' => end($ps),
+                    );
+                } else {  //Docker停用狀態
+                    $status = '';
+                    $i = 7;
+                    while($i != (count($ps)-1)) {
+                        $status .= $ps[$i].' ';
+                        $i++;
+                    }
+                    $docker = array(
+                        'container_id' => $ps[0],
+                        'created' => $ps[4].' '.$ps[5].' '.$ps[6],
+                        'status' => $status,
+                        'port' => '-',
+                        'name' => end($ps),
+                    );
+                }
+
                 $data['dockers'][] = $docker;
             }
         }
@@ -272,5 +307,83 @@ class ServerCrudController extends CrudController
         });
 
         return view('vps.server.stats', $data);
+    }
+
+    /**
+     * 啟動Docker
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @author Jeff Lin
+     */
+    public function dockerStart(Request $request)
+    {
+        $server = Server::find($request->server_id);
+        if ( !$server) {
+            Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
+            return redirect()->back();
+        }
+        $username = 'root';
+        $password = $server->ssh_pwd;
+        $ip = $server->ip;
+        $port = $server->ssh_port;
+        $container_id = $request->container_id;
+
+        try {
+            $connection = ssh2_connect($ip, $port);
+            ssh2_auth_password($connection, $username, $password);
+
+            ssh2_exec($connection, 'docker start '.$container_id);
+
+            ssh2_exec($connection, 'exit');
+            unset($connection);
+
+        } catch (\Exception $exception) {
+            Log::error('Docker start failed. error: '.$exception->getMessage());
+            Alert::error("Docker start failed. <br/> Please check the server's setting.")->flash();
+            return redirect()->back();
+        }
+
+        Alert::success("Docker start success!")->flash();
+        return redirect()->back();
+    }
+
+    /**
+     * 關閉Docker
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @author Jeff Lin
+     */
+    public function dockerStop(Request $request)
+    {
+        $server = Server::find($request->server_id);
+        if ( !$server) {
+            Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
+            return redirect()->back();
+        }
+        $username = 'root';
+        $password = $server->ssh_pwd;
+        $ip = $server->ip;
+        $port = $server->ssh_port;
+        $container_id = $request->container_id;
+
+        try {
+            $connection = ssh2_connect($ip, $port);
+            ssh2_auth_password($connection, $username, $password);
+
+            ssh2_exec($connection, 'docker stop '.$container_id);
+
+            ssh2_exec($connection, 'exit');
+            unset($connection);
+
+        } catch (\Exception $exception) {
+            Log::error('Docker stop failed. error: '.$exception->getMessage());
+            Alert::error("Docker stop failed. <br/> Please check the server's setting.")->flash();
+            return redirect()->back();
+        }
+
+        Alert::success("Docker stop success!")->flash();
+        return redirect()->back();
     }
 }

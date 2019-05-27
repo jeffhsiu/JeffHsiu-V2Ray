@@ -53,7 +53,7 @@
                                 <tr>
                                     <td><strong>CPU %</strong></td>
                                     <td>
-                                        - %
+                                        -
                                     </td>
                                 </tr>
                             </tbody>
@@ -100,16 +100,24 @@
                                         {{ $docker['status'] }}
                                     </td>
                                     <td>
-                                        {{ $docker['cpu'] }}
+                                        {{ isset($docker['cpu']) ? $docker['cpu'] : '-' }}
                                     </td>
                                     <td>
-                                        {{ $docker['mem'] }}
+                                        {{ isset($docker['mem']) ? $docker['mem'] : '-' }}
                                     </td>
                                     <td>
-                                        {{ $docker['net'] }}
+                                        {{ isset($docker['net']) ? $docker['net'] : '-' }}
                                     </td>
                                     <td>
-
+                                        @if(substr($docker['status'], 0, 2) == 'Up')
+                                            <a href="{{ backpack_url('vps/server/docker/stop'.'?server_id='.$server_id.'&container_id='.$docker['container_id']) }}" class="btn btn-xs btn-default">
+                                                <i class="fa fa-stop-circle"></i> Stop
+                                            </a>
+                                        @else
+                                            <a href="{{ backpack_url('vps/server/docker/start'.'?server_id='.$server_id.'&container_id='.$docker['container_id']) }}" class="btn btn-xs btn-default">
+                                                <i class="fa fa-play-circle"></i> Start
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
