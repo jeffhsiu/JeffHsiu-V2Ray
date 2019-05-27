@@ -17,5 +17,6 @@ Route::group([
         'middleware' => ['permission:vps']
     ], function () {
         CRUD::resource('server', 'ServerCrudController', ['middleware' => 'permission:vps-server']);
+        Route::get('server/stats/{server_id}', 'ServerCrudController@stats');
     });
 }); // this should be the absolute last line of this file

@@ -9,6 +9,9 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use App\Http\Requests\VPS\ServerRequest as StoreRequest;
 use App\Http\Requests\VPS\ServerRequest as UpdateRequest;
 use Backpack\CRUD\CrudPanel;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Prologue\Alerts\Facades\Alert;
 
 /**
  * Class ServerCrudController
@@ -149,6 +152,8 @@ class ServerCrudController extends CrudController
                 $this->crud->addClause('where', 'end_date', '<=', $dates->to . ' 23:59:59');
         });
 
+        $this->crud->addButtonFromView('line', 'stats', 'server-stats', 'beginning');
+
         $this->crud->allowAccess('show');
 
         // add asterisk for fields that are required in ServerRequest
@@ -199,5 +204,73 @@ class ServerCrudController extends CrudController
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
         return $redirect_location;
+    }
+
+    public function stats(Request $request)
+    {
+        $server = Server::find($request->server_id);
+        $username = 'root';
+        $password = $server->ssh_pwd;
+        $ip = $server->ip;
+        $port = $server->ssh_port;
+        $data = array();
+        $data['ip'] = $ip;
+
+        try {
+            $connection = ssh2_connect($ip, $port);
+            ssh2_auth_password($connection, $username, $password);
+
+            $stream = ssh2_exec($connection, 'docker ps -a');
+            stream_set_blocking($stream, true);
+            $docker_ps_output = stream_get_contents($stream);
+
+            $stream = ssh2_exec($connection, 'docker stats --no-stream');
+            stream_set_blocking($stream, true);
+            $docker_stats_output = stream_get_contents($stream);
+
+            ssh2_exec($connection, 'exit');
+            unset($connection);
+
+        } catch (\Exception $exception) {
+            Log::error('SSH connnect failed. error: '.$exception->getMessage());
+            Alert::error("SSH connect failed. <br/> Please check the server's setting.")->flash();
+            return redirect()->back();
+        }
+
+        $docker_ps = explode("\n", $docker_ps_output);
+        foreach ($docker_ps as $key => $value) {
+            if ($key >= 1 && !empty($value)) {
+                $ps = array_values(array_filter(explode(' ', $value)));
+                $docker = array(
+                    'container_id' => $ps[0],
+                    'created' => $ps[4].' '.$ps[5].' '.$ps[6],
+                    'status' => $ps[7].' '.$ps[8].' '.$ps[9],
+                    'port' => substr($ps[10], 8, 4),
+                    'name' => $ps[11],
+                );
+                $data['dockers'][] = $docker;
+            }
+        }
+
+        $docker_stats = explode("\n", $docker_stats_output);
+        foreach ($docker_stats as $key => $value) {
+            if ($key >= 1 && !empty($value)) {
+                $stats = array_values(array_filter(explode(' ', $value)));
+                foreach ($data['dockers'] as &$docker) {
+                    if ($stats[0] == $docker['container_id']) {
+                        $docker['cpu'] = $stats[2];
+                        $docker['mem'] = $stats[3].' '.$stats[4].' '.$stats[5];
+                        $docker['net'] = $stats[7];
+                    }
+                }
+                unset($docker);
+            }
+        }
+
+        usort($data['dockers'], function($a, $b) {
+            return $a['port'] <=> $b['port'];
+        });
+
+        return view('vps.server.stats', $data);
     }
 }
