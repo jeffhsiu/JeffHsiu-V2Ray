@@ -28,6 +28,12 @@ class PermissionSeeder extends Seeder
         if ( !Permission::where('name', 'vps-server-sshpwd')->exists()) {
             Permission::create(['name' => 'vps-server-sshpwd'])->assignRole();
         }
+        if ( !Permission::where('name', 'vps-account')->exists()) {
+            Permission::create(['name' => 'vps-account'])->assignRole();
+        }
+        if ( !Permission::where('name', 'vps-account-password')->exists()) {
+            Permission::create(['name' => 'vps-account-password'])->assignRole();
+        }
 
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();

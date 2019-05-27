@@ -52,9 +52,13 @@ class ServerCrudController extends CrudController
                 'type' => 'text',
             ],
             [
-                'name' => 'account',
-                'label' => 'Account',
-                'type' => 'text',
+                // 1-n relationship
+                'name' => 'account_id', // the column that contains the ID of that connected entity;
+                'label' => "Account", // Table column heading
+                'type' => "select",
+                'entity' => 'account', // the method that defines the relationship in your Model
+                'attribute' => "account", // foreign key attribute that is shown to user
+                'model' => "App\Models\VPS\Account", // foreign key model
             ],
             [
                 'name' => "end_date", // The db column name
@@ -79,10 +83,14 @@ class ServerCrudController extends CrudController
                 'label' => 'IP', // Table column heading
                 'type' => 'text',
             ],
-            [
-                'name' => 'account',
-                'label' => 'Account',
-                'type' => 'text',
+            [  // Select2
+                'name' => 'account_id', // the db column for the foreign key
+                'label' => "Account",
+                'type' => 'select2-notnull',
+                'entity' => 'account', // the method that defines the relationship in your Model
+                'attribute' => 'account', // foreign key attribute that is shown to user
+                'model' => 'App\Models\VPS\Account', // foreign key model
+                'addition' => []
             ],
             [   // Number
                 'name' => 'ssh_port',
@@ -97,7 +105,7 @@ class ServerCrudController extends CrudController
             [
                 'name' => 'ssh_pwd',
                 'label' => 'SSH Password',
-                'type' => 'password',
+                'type' => 'text',
             ],
             [   // DateTime
                 'name' => 'end_date',

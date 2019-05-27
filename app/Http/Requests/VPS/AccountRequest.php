@@ -5,7 +5,7 @@ namespace App\Http\Requests\VPS;
 use App\Http\Requests\Request;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ServerRequest extends FormRequest
+class AccountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,8 +26,8 @@ class ServerRequest extends FormRequest
     public function rules()
     {
         return [
-            'ip' => 'required',
-            'ssh_pwd' => 'required',
+             'account' => 'required',
+             'password' => 'required'
         ];
     }
 

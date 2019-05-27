@@ -5,7 +5,7 @@ namespace App\Models\VPS;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\CrudTrait;
 
-class Server extends Model
+class Account extends Model
 {
     use CrudTrait;
 
@@ -14,18 +14,13 @@ class Server extends Model
     | GLOBAL VARIABLES
     |--------------------------------------------------------------------------
     */
-    protected $table = 'server';
+    protected $table = 'account';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
-
-    // VPS提供商 Google Cloud
-    const PROVIDER_GOOGLE = 1;
-    // VPS提供商 Bandwagon
-    const PROVIDER_BANDWAGON = 2;
 
     /*
     |--------------------------------------------------------------------------
@@ -38,9 +33,9 @@ class Server extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function account()
+    public function servers()
     {
-        return $this->belongsTo('App\Models\VPS\Account');
+        return $this->hasMany('App\Models\VPS\Server');
     }
 
     /*
@@ -54,7 +49,7 @@ class Server extends Model
     | ACCESORS
     |--------------------------------------------------------------------------
     */
-    public function getSshPwdAttribute($value)
+    public function getPasswordAttribute($value)
     {
         return decrypt($value);
     }
@@ -64,12 +59,12 @@ class Server extends Model
     | MUTATORS
     |--------------------------------------------------------------------------
     */
-    public function setSshPwdAttribute($value)
+    public function setPasswordAttribute($value)
     {
         if (empty($value)) {
-            $this->attributes['ssh_pwd'] = encrypt($this->ssh_pwd);
+            $this->attributes['password'] = encrypt($this->password);
         } else {
-            $this->attributes['ssh_pwd'] = encrypt($value);
+            $this->attributes['password'] = encrypt($value);
         }
     }
 }

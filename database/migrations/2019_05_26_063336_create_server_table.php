@@ -17,7 +17,7 @@ class CreateServerTable extends Migration
             $table->bigIncrements('id');
             $table->tinyInteger('provider')->default(1)->comment('VPS提供商');
             $table->string('ip', 20)->default('');
-            $table->string('account')->default('')->comment('VPS商家帳號');
+            $table->integer('account_id')->default(1)->comment('VPS商家帳號');
             $table->integer('ssh_port')->default(22)->comment('SSH連線端口');
             $table->string('ssh_pwd')->default('')->comment('SSH連線密碼');
             $table->timestamp('end_date')->nullable()->comment('服務器租用到期日');

@@ -20,5 +20,7 @@ Route::group([
         Route::get('server/stats/{server_id}', 'ServerCrudController@stats');
         Route::get('server/docker/start', 'ServerCrudController@dockerStart');
         Route::get('server/docker/stop', 'ServerCrudController@dockerStop');
+
+        CRUD::resource('account', 'AccountCrudController', ['middleware' => 'permission:vps-account']);
     });
 }); // this should be the absolute last line of this file
