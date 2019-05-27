@@ -75,7 +75,7 @@
                         </div>
                     </div>
                     <div class="box-body no-border">
-                        <table class="table table-striped table-hover responsive">
+                        <table id="docker_table" class="table table-striped table-hover responsive" style="width: 100%;">
                             <thead>
                             <tr>
                                 <th>Name</th>
@@ -90,7 +90,7 @@
                             <tbody>
                             @foreach($dockers as $docker)
                                 <tr>
-                                    <td>
+                                    <td style="min-width: 60px;">
                                         {{ $docker['name'] }}
                                     </td>
                                     <td>
@@ -132,11 +132,37 @@
 @endsection
 
 @section('after_styles')
+    <!-- DATA TABLES -->
+    <link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.1/css/responsive.bootstrap.min.css">
+
     <link rel="stylesheet" href="{{ asset('vendor/backpack/crud/css/crud.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/backpack/crud/css/show.css') }}">
 @endsection
 
 @section('after_scripts')
+    <!-- DATA TABLES SCRIPT -->
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.1/js/responsive.bootstrap.min.js"></script>
+
     <script src="{{ asset('vendor/backpack/crud/js/crud.js') }}"></script>
     <script src="{{ asset('vendor/backpack/crud/js/show.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#docker_table').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                columnDefs: [
+                    { responsivePriority: 1, targets: 0 },
+                    { responsivePriority: 2, targets: 2 },
+                    { responsivePriority: 3, targets: 5 },
+                    { responsivePriority: 4, targets: -1 },
+                ]
+            });
+        });
+    </script>
 @endsection

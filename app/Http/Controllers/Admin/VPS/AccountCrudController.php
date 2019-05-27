@@ -47,6 +47,7 @@ class AccountCrudController extends CrudController
                 'name' => 'account',
                 'label' => 'Account',
                 'type' => 'text',
+                'priority' => 1,
             ],
         ]);
 

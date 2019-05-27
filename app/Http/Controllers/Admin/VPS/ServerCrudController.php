@@ -50,6 +50,7 @@ class ServerCrudController extends CrudController
                 'name' => 'ip', // The db column name
                 'label' => 'IP', // Table column heading
                 'type' => 'text',
+                'priority' => 1,
             ],
             [
                 // 1-n relationship
@@ -261,6 +262,11 @@ class ServerCrudController extends CrudController
         foreach ($docker_ps as $key => $value) {
             if ($key >= 1 && !empty($value)) {
                 $ps = array_values(array_filter(explode(' ', $value)));
+                $name = end($ps);
+                // Docker Name 個位數補零
+                if (substr($name, 6) < 10 && substr($name, 6, 1) != '0') {
+                    $name = substr_replace($name, '0', 6, 0);
+                }
                 if ($ps[7] == 'Up' OR $ps[8] == 'Up') {  //Docker啟用狀態
                     $status = '';
                     $i = 7;
@@ -273,7 +279,7 @@ class ServerCrudController extends CrudController
                         'created' => $ps[4].' '.$ps[5].' '.$ps[6],
                         'status' => $status,
                         'port' => substr($ps[$i], 8, 4),
-                        'name' => end($ps),
+                        'name' => $name,
                     );
                 } else {  //Docker停用狀態
                     $status = '';
@@ -287,7 +293,7 @@ class ServerCrudController extends CrudController
                         'created' => $ps[4].' '.$ps[5].' '.$ps[6],
                         'status' => $status,
                         'port' => '-',
-                        'name' => end($ps),
+                        'name' => $name,
                     );
                 }
 
@@ -309,10 +315,6 @@ class ServerCrudController extends CrudController
                 unset($docker);
             }
         }
-
-        usort($data['dockers'], function($a, $b) {
-            return $a['port'] <=> $b['port'];
-        });
 
         return view('vps.server.stats', $data);
     }
