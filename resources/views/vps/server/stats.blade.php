@@ -45,14 +45,6 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <strong>Rent Due Date</strong>
-                                    </td>
-                                    <td>
-                                        {{ $end_date }}
-                                    </td>
-                                </tr>
-                                <tr>
                                     <td><strong>Mem</strong></td>
                                     <td>
                                         -
@@ -62,6 +54,14 @@
                                     <td><strong>CPU %</strong></td>
                                     <td>
                                         -
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Rent Due Date</strong>
+                                    </td>
+                                    <td>
+                                        {{ $end_date }}
                                     </td>
                                 </tr>
                             </tbody>

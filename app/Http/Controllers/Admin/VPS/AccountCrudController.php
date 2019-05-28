@@ -49,6 +49,11 @@ class AccountCrudController extends CrudController
                 'type' => 'text',
                 'priority' => 1,
             ],
+            [
+                'name' => 'remark',
+                'label' => 'Remark',
+                'type' => 'text',
+            ],
         ]);
 
         $this->crud->addFields([
@@ -71,6 +76,11 @@ class AccountCrudController extends CrudController
                 'label' => 'Password',
                 'type' => 'password',
             ],
+            [
+                'name' => 'remark',
+                'label' => 'Remark',
+                'type' => 'text',
+            ],
         ]);
 
         $this->crud->allowAccess('show');
@@ -91,7 +101,7 @@ class AccountCrudController extends CrudController
                     'label' => 'Password',
                     'type' => 'text',
                 ]
-            );
+            )->afterColumn('account');
         } else {
             $this->crud->removeColumn('password');
         }

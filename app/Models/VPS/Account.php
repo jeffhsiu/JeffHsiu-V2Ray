@@ -67,4 +67,9 @@ class Account extends Model
             $this->attributes['password'] = encrypt($value);
         }
     }
+
+    public function setRemarkAttribute($value)
+    {
+        $this->attributes['remark'] = empty($value) ? '' : $value;
+    }
 }

@@ -27,7 +27,6 @@ class AccountRequest extends FormRequest
     {
         return [
              'account' => 'required',
-             'password' => 'required'
         ];
     }
 
