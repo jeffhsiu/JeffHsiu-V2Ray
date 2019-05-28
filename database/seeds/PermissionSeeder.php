@@ -15,6 +15,7 @@ class PermissionSeeder extends Seeder
     {
         // 創建角色
         $super_admin = Role::where('name', 'Super Admin')->exists() ? Role::where('name', 'Super Admin')->first() : Role::create(['name' => 'Super Admin']);
+        $distributor = Role::where('name', 'Distributor')->exists() ? Role::where('name', 'Distributor')->first() : Role::create(['name' => 'Distributor']);
 
         /*
          * VPS 權限控制
@@ -33,6 +34,22 @@ class PermissionSeeder extends Seeder
         }
         if ( !Permission::where('name', 'vps-account-password')->exists()) {
             Permission::create(['name' => 'vps-account-password'])->assignRole();
+        }
+
+        /*
+         * Order 權限控制
+         */
+        if ( !Permission::where('name', 'order')->exists()) {
+            Permission::create(['name' => 'order'])->assignRole($distributor);
+        }
+        if ( !Permission::where('name', 'order-distributor')->exists()) {
+            Permission::create(['name' => 'order-distributor'])->assignRole();
+        }
+        if ( !Permission::where('name', 'order-customer')->exists()) {
+            Permission::create(['name' => 'order-customer'])->assignRole($distributor);
+        }
+        if ( !Permission::where('name', 'order-order')->exists()) {
+            Permission::create(['name' => 'order-order'])->assignRole($distributor);
         }
 
         // Reset cached roles and permissions
