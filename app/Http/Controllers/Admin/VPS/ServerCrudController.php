@@ -236,6 +236,7 @@ class ServerCrudController extends CrudController
         $data = array();
         $data['ip'] = $ip;
         $data['server_id'] = $server->id;
+        $data['end_date'] = strstr($server->end_date, ' ', true);
 
         try {
             $connection = ssh2_connect($ip, $port);
@@ -267,30 +268,28 @@ class ServerCrudController extends CrudController
                 if (substr($name, 6) < 10 && substr($name, 6, 1) != '0') {
                     $name = substr_replace($name, '0', 6, 0);
                 }
-                if ($ps[7] == 'Up' OR $ps[8] == 'Up') {  //Docker啟用狀態
+                if (in_array('Up', $ps)) {  //Docker啟用狀態
                     $status = '';
-                    $i = 7;
+                    $i = array_search('Up', $ps);
                     while($i != (count($ps)-2)) {
                         $status .= $ps[$i].' ';
                         $i++;
                     }
                     $docker = array(
                         'container_id' => $ps[0],
-                        'created' => $ps[4].' '.$ps[5].' '.$ps[6],
                         'status' => $status,
                         'port' => substr($ps[$i], 8, 4),
                         'name' => $name,
                     );
                 } else {  //Docker停用狀態
                     $status = '';
-                    $i = 7;
+                    $i = array_search('Exited', $ps);
                     while($i != (count($ps)-1)) {
                         $status .= $ps[$i].' ';
                         $i++;
                     }
                     $docker = array(
                         'container_id' => $ps[0],
-                        'created' => $ps[4].' '.$ps[5].' '.$ps[6],
                         'status' => $status,
                         'port' => '-',
                         'name' => $name,

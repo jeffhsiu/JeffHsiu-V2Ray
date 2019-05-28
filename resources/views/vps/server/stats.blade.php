@@ -45,6 +45,14 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>
+                                        <strong>Rent Due Date</strong>
+                                    </td>
+                                    <td>
+                                        {{ $end_date }}
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td><strong>Mem</strong></td>
                                     <td>
                                         -
@@ -81,7 +89,6 @@
                                 <th>Name</th>
                                 <th>Port</th>
                                 <th>Status</th>
-                                <th>CPU %</th>
                                 <th>Mem / Limit</th>
                                 <th>Net I/O</th>
                                 <th>Actions</th>
@@ -98,9 +105,6 @@
                                     </td>
                                     <td>
                                         {{ $docker['status'] }}
-                                    </td>
-                                    <td>
-                                        {{ isset($docker['cpu']) ? $docker['cpu'] : '-' }}
                                     </td>
                                     <td>
                                         {{ isset($docker['mem']) ? $docker['mem'] : '-' }}
