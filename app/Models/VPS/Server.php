@@ -43,6 +43,11 @@ class Server extends Model
         return $this->belongsTo('App\Models\VPS\Account');
     }
 
+    public function orders()
+    {
+        return $this->hasMany('App\Models\Order\Order');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

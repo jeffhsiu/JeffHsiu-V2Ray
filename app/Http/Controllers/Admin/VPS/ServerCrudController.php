@@ -91,16 +91,11 @@ class ServerCrudController extends CrudController
                 'entity' => 'account', // the method that defines the relationship in your Model
                 'attribute' => 'account', // foreign key attribute that is shown to user
                 'model' => 'App\Models\VPS\Account', // foreign key model
-                'addition' => []
             ],
             [   // Number
                 'name' => 'ssh_port',
                 'label' => 'SSH Port',
                 'type' => 'number',
-                // optionals
-                // 'attributes' => ["step" => "any"], // allow decimals
-                // 'prefix' => "$",
-                // 'suffix' => ".00",
                 'default' => 22,
             ],
             [

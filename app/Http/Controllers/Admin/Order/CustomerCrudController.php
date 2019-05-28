@@ -93,6 +93,8 @@ class CustomerCrudController extends CrudController
             ],
         ]);
 
+        $this->crud->orderBy('id', 'desc');
+
         $this->crud->allowAccess('show');
 
         // add asterisk for fields that are required in CustomerRequest

@@ -31,5 +31,6 @@ Route::group([
     ], function () {
         CRUD::resource('distributor', 'DistributorCrudController', ['middleware' => 'permission:order-distributor']);
         CRUD::resource('customer', 'CustomerCrudController', ['middleware' => 'permission:order-customer']);
+        CRUD::resource('order', 'OrderCrudController', ['middleware' => 'permission:order-order']);
     });
 }); // this should be the absolute last line of this file
