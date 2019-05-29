@@ -41,19 +41,19 @@ class Order extends Model
     public function getCustomerLink() {
         $customer = Customer::find($this->customer_id);
         $url = backpack_url('order/customer/'.$customer->id);
-        return '<a href="'.$url.'" target="_blank">'.$customer->name.'</a>';
+        return '<a href="'.$url.'">'.$customer->name.'</a>';
     }
 
     public function getDistributorLink() {
         $distributor = Distributor::find($this->distributor_id);
         $url = backpack_url('order/distributor/'.$distributor->id);
-        return '<a href="'.$url.'" target="_blank">'.$distributor->name.'</a>';
+        return '<a href="'.$url.'">'.$distributor->name.'</a>';
     }
 
     public function getServerIpLink() {
         $server = Server::find($this->server_id);
         $url = backpack_url('vps/server/stats/'.$server->id);
-        return '<a href="'.$url.'" target="_blank">'.$server->ip.'</a>';
+        return '<a href="'.$url.'">'.$server->ip.'</a>';
     }
 
     /*

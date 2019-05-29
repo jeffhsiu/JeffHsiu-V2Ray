@@ -302,6 +302,22 @@ class OrderCrudController extends CrudController
                 $server = Server::where('ip', 'LIKE', "%$value%")->get('id')->toArray();
                 $this->crud->addClause('whereIn', 'server_id', array_column($server, 'id'));
             });
+        $this->crud->addFilter([
+            'name' => 'price',
+            'label'=> 'Price',
+            'type' => 'range',
+            'label_from' => 'min',
+            'label_to' => 'max'
+        ], false,
+            function($value) { // if the filter is active
+                $range = json_decode($value);
+                if ($range->from) {
+                    $this->crud->addClause('where', 'price', '>=', (float) $range->from);
+                }
+                if ($range->to) {
+                    $this->crud->addClause('where', 'price', '<=', (float) $range->to);
+                }
+            });
 
         $this->crud->orderBy('id', 'desc');
 

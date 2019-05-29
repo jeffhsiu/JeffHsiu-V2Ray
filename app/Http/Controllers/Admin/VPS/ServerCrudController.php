@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\VPS;
 
+use App\Models\Order\Order;
 use App\Models\VPS\Server;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
@@ -91,6 +92,9 @@ class ServerCrudController extends CrudController
                 'entity' => 'account', // the method that defines the relationship in your Model
                 'attribute' => 'account', // foreign key attribute that is shown to user
                 'model' => 'App\Models\VPS\Account', // foreign key model
+                'options'   => (function ($query) {
+                    return $query->orderBy('id', 'desc')->get();
+                })
             ],
             [   // Number
                 'name' => 'ssh_port',
@@ -254,6 +258,7 @@ class ServerCrudController extends CrudController
             return redirect()->back();
         }
 
+        // 獲取docker ps
         $docker_ps = explode("\n", $docker_ps_output);
         foreach ($docker_ps as $key => $value) {
             if ($key >= 1 && !empty($value)) {
@@ -264,27 +269,49 @@ class ServerCrudController extends CrudController
                     $name = substr_replace($name, '0', 6, 0);
                 }
                 if (in_array('Up', $ps)) {  //Docker啟用狀態
+                    $created = '';
+                    $i = 4;
+                    $end = array_search('Up', $ps);
+                    while($i != $end) {
+                        $created .= $ps[$i].' ';
+                        $i++;
+                    }
+
                     $status = '';
                     $i = array_search('Up', $ps);
-                    while($i != (count($ps)-2)) {
+                    $end = count($ps) - 2;
+                    while($i != $end) {
                         $status .= $ps[$i].' ';
                         $i++;
                     }
+
                     $docker = array(
                         'container_id' => $ps[0],
+                        'created' => $created,
                         'status' => $status,
                         'port' => substr($ps[$i], 8, 4),
                         'name' => $name,
                     );
                 } else {  //Docker停用狀態
+                    $created = '';
+                    $i = 4;
+                    $end = array_search('Exited', $ps);
+                    while($i != $end) {
+                        $created .= $ps[$i].' ';
+                        $i++;
+                    }
+
                     $status = '';
                     $i = array_search('Exited', $ps);
-                    while($i != (count($ps)-1)) {
+                    $end = count($ps) - 1;
+                    while($i != $end) {
                         $status .= $ps[$i].' ';
                         $i++;
                     }
+
                     $docker = array(
                         'container_id' => $ps[0],
+                        'created' => $created,
                         'status' => $status,
                         'port' => '-',
                         'name' => $name,
@@ -295,6 +322,7 @@ class ServerCrudController extends CrudController
             }
         }
 
+        // 獲取docker stats
         $docker_stats = explode("\n", $docker_stats_output);
         foreach ($docker_stats as $key => $value) {
             if ($key >= 1 && !empty($value)) {
@@ -307,6 +335,19 @@ class ServerCrudController extends CrudController
                     }
                 }
                 unset($docker);
+            }
+        }
+
+        // 對應的訂單記錄
+        foreach ($data['dockers'] as &$docker) {
+            $order = Order::where('server_id', $server->id)
+                ->where('docker_name', $docker['name'])
+                ->orderBy('end_date')
+                ->first();
+            if ($order) {
+                $docker['customer'] = '<a href="'.backpack_url('order/order/'.$order->id).'">'.$order->customer->name.'</a>';
+                $docker['start_date'] = strstr($order->start_date, ' ', true);
+                $docker['end_date'] = strstr($order->end_date, ' ', true);
             }
         }
 

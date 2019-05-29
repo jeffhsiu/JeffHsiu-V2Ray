@@ -75,7 +75,7 @@
                 <div class="box box-primary" style="border-top-width: 3px;">
                     <div class="box-header with-border">
                         <h4 class="box-title">
-                            Docker Stats
+                            Docker Orders
                         </h4>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -89,8 +89,10 @@
                                 <th>Name</th>
                                 <th>Port</th>
                                 <th>Status</th>
-                                <th>Mem / Limit</th>
                                 <th>Net I/O</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Customer</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -104,13 +106,19 @@
                                         {{ $docker['port'] }}
                                     </td>
                                     <td>
-                                        {{ $docker['status'] }}
-                                    </td>
-                                    <td>
-                                        {{ isset($docker['mem']) ? $docker['mem'] : '-' }}
+                                        {{ explode(' ', $docker['status'])[0] }}
                                     </td>
                                     <td>
                                         {{ isset($docker['net']) ? $docker['net'] : '-' }}
+                                    </td>
+                                    <td>
+                                        {{ isset($docker['start_date']) ? $docker['start_date'] : '-'  }}
+                                    </td>
+                                    <td>
+                                        {{ isset($docker['end_date']) ? !empty($docker['end_date']) ? $docker['end_date'] : '~' : '-'  }}
+                                    </td>
+                                    <td>
+                                        {!! isset($docker['customer']) ? $docker['customer'] : '-'  !!}
                                     </td>
                                     <td>
                                         @if(substr($docker['status'], 0, 2) == 'Up')
@@ -123,6 +131,68 @@
                                             </a>
                                         @endif
                                     </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div><!-- /.box-body -->
+                </div>
+            </div><!-- /.box -->
+
+            <!-- Default box -->
+            <div class="m-t-20">
+                <div class="box box-success" style="border-top-width: 3px;">
+                    <div class="box-header with-border">
+                        <h4 class="box-title">
+                            Docker Stats
+                        </h4>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div class="box-body no-border">
+                        <table id="docker_stats_table" class="table table-striped table-hover responsive" style="width: 100%;">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Port</th>
+                                <th>Container ID</th>
+                                <th>Created</th>
+                                <th>Status</th>
+                                <th>CPU %</th>
+                                <th>Mem / Limit</th>
+                                <th>Net I/O</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($dockers as $docker)
+                                <tr>
+                                    <td style="min-width: 60px;">
+                                        {{ $docker['name'] }}
+                                    </td>
+                                    <td>
+                                        {{ $docker['port'] }}
+                                    </td>
+                                    <td>
+                                        {{ $docker['container_id'] }}
+                                    </td>
+                                    <td>
+                                        {{ $docker['created'] }}
+                                    </td>
+                                    <td>
+                                        {{ $docker['status'] }}
+                                    </td>
+                                    <td>
+                                        {{ isset($docker['cpu']) ? $docker['cpu'] : '-' }}
+                                    </td>
+                                    <td>
+                                        {{ isset($docker['mem']) ? $docker['mem'] : '-' }}
+                                    </td>
+                                    <td>
+                                        {{ isset($docker['net']) ? $docker['net'] : '-' }}
+                                    </td>
+
                                 </tr>
                             @endforeach
                             </tbody>
@@ -162,8 +232,21 @@
                 info: false,
                 columnDefs: [
                     { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 2, targets: 2 },
-                    { responsivePriority: 3, targets: 5 },
+                    { responsivePriority: 2, targets: 3 },
+                    { responsivePriority: 3, targets: -2 },
+                    { responsivePriority: 4, targets: -1 },
+                    { responsivePriority: 5, targets: 4 },
+                ]
+            });
+
+            $('#docker_stats_table').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                columnDefs: [
+                    { responsivePriority: 1, targets: 0 },
+                    { responsivePriority: 2, targets: -3 },
+                    { responsivePriority: 3, targets: -2 },
                     { responsivePriority: 4, targets: -1 },
                 ]
             });
