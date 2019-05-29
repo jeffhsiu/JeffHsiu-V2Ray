@@ -12,6 +12,7 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use App\Http\Requests\Order\OrderRequest as StoreRequest;
 use App\Http\Requests\Order\OrderRequest as UpdateRequest;
 use Backpack\CRUD\CrudPanel;
+use Prologue\Alerts\Facades\Alert;
 
 /**
  * Class OrderCrudController
@@ -330,6 +331,14 @@ class OrderCrudController extends CrudController
 
     public function store(StoreRequest $request)
     {
+        $order = Order::where('server_id', $request->server_id)
+            ->where('docker_name', $request->docker_name)
+            ->where('status', Order::STATUS_ENABLE)
+            ->where('customer_id', '<>', $request->customer_id);
+        if ($order->exists()) {
+            Alert::error("The V2Ray account has been used.<br/> Please choose another setting or disable the account in use.")->flash();
+            return redirect()->back();
+        }
         // your additional operations before save here
         $redirect_location = parent::storeCrud($request);
         // your additional operations after save here
