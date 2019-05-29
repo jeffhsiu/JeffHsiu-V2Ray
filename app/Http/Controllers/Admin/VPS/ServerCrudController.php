@@ -162,38 +162,9 @@ class ServerCrudController extends CrudController
 
         $this->crud->addButtonFromView('line', 'stats', 'server-stats', 'beginning');
 
-        $this->crud->allowAccess('show');
-
         // add asterisk for fields that are required in ServerRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');
         $this->crud->setRequiredFields(UpdateRequest::class, 'edit');
-    }
-
-    public function show($id)
-    {
-        $content = parent::show($id);
-
-        $this->crud->removeColumn('ssh_pwd');
-
-        $this->crud->addColumns([
-            [
-                'name' => 'ssh_port',
-                'label' => "SSH Port",
-                'type' => 'number',
-            ],
-
-        ]);
-        if (backpack_user()->can('vps-server-sshpwd')) {
-            $this->crud->addColumn(
-                [
-                    'name' => 'ssh_pwd',
-                    'label' => 'SSH Password',
-                    'type' => 'text',
-                ]
-            );
-        }
-
-        return $content;
     }
 
     public function store(StoreRequest $request)
@@ -234,6 +205,17 @@ class ServerCrudController extends CrudController
         $port = $server->ssh_port;
         $data = array();
         $data['ip'] = $ip;
+        switch ($server->provider) {
+            case Server::PROVIDER_GOOGLE:
+                $data['provider'] = 'Google Cloud';
+                break;
+            case Server::PROVIDER_BANDWAGON:
+                $data['provider'] = 'Bandwagon';
+                break;
+            default:
+                $data['provider'] = 'UnKnonw';
+                break;
+        }
         $data['server_id'] = $server->id;
         $data['end_date'] = strstr($server->end_date, ' ', true);
 

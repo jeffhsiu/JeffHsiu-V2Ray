@@ -38,6 +38,14 @@
                             <tbody>
                                 <tr>
                                     <td>
+                                        <strong>Provider</strong>
+                                    </td>
+                                    <td>
+                                        {{ $provider }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
                                         <strong>IP</strong>
                                     </td>
                                     <td>
