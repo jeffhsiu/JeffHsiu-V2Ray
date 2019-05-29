@@ -157,19 +157,27 @@ class OrderCrudController extends CrudController
                     Order::TYPE_PAID => 'Paid',
                 ],
             ],
-            [
-                'name' => 'order_date_range', // a unique name for this field
-                'start_name' => 'start_date', // the db column that holds the start_date
-                'end_name' => 'end_date', // the db column that holds the end_date
-                'label' => 'Date Range',
-                'type' => 'date_range',
-                // OPTIONALS
-                'start_default' => date('Y-m-d'), // default value for start_date
-                'end_default' => date('Y-m-d', strtotime('+7 days')), // default value for end_date
-                'date_range_options' => [ // options sent to daterangepicker.js
-                    'timePicker' => true,
-                    'locale' => ['format' => 'YYYY-MM-DD']
-                ]
+            [   // DateTime
+                'name' => 'start_date',
+                'label' => 'Start Date',
+                'type' => 'datetime_picker',
+                // optional:
+                'datetime_picker_options' => [
+                    'format' => 'YYYY-MM-DD',
+                ],
+                'allows_null' => true,
+                'default' => date('Y-m-d'),
+            ],
+            [   // DateTime
+                'name' => 'end_date',
+                'label' => 'End Date',
+                'type' => 'datetime_picker',
+                // optional:
+                'datetime_picker_options' => [
+                    'format' => 'YYYY-MM-DD',
+                ],
+                'allows_null' => true,
+                // 'default' => '2017-05-12 11:59:59',
             ],
             [
                 // 1-n relationship
