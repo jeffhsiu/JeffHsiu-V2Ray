@@ -413,4 +413,35 @@ class ServerCrudController extends CrudController
         Alert::success("Docker stop success!")->flash();
         return redirect()->back();
     }
+
+    /**
+     * 取得Docker V2Ray config
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @author Jeff Lin
+     */
+    public function getV2RayConfig(Request $request)
+    {
+        $server = Server::find($request->server_id);
+        if ( !$server) {
+            Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
+            return redirect()->back();
+        }
+        $path = storage_path('v2ray/account');
+        $index = substr($request->docker_name, -2, 2);
+        switch ($request->type) {
+            case 'txt':
+                $path = $path.'/'.$server->ip.'/config-'.$index.'.txt';
+                break;
+            case 'qrcode':
+                $path = $path.'/'.$server->ip.'/qrcode-'.$index.'.png';
+                break;
+            default:
+                Alert::error("Config type error.")->flash();
+                return redirect()->back();
+                break;
+        }
+        return response()->file($path);
+    }
 }

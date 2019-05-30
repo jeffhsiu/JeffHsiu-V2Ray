@@ -128,7 +128,7 @@
                                     <td>
                                         {!! isset($docker['customer']) ? $docker['customer'] : '-'  !!}
                                     </td>
-                                    <td>
+                                    <td style="min-width: 185px">
                                         @if(substr($docker['status'], 0, 2) == 'Up')
                                             <a href="{{ backpack_url('vps/server/docker/stop'.'?server_id='.$server_id.'&container_id='.$docker['container_id']) }}" class="btn btn-xs btn-default">
                                                 <i class="fa fa-stop-circle"></i> Stop
@@ -138,6 +138,15 @@
                                                 <i class="fa fa-play-circle"></i> Start
                                             </a>
                                         @endif
+                                        <a href="{{ backpack_url('vps/server/docker/redo'.'?server_id='.$server_id.'&container_id='.$docker['container_id']) }}" class="btn btn-xs btn-default">
+                                            <i class="fa fa-refresh"></i> Redo
+                                        </a>
+                                        <a href="{{ backpack_url('vps/server/docker/config'.'?server_id='.$server_id.'&docker_name='.$docker['name'].'&type=txt') }}" class="btn btn-xs btn-default">
+                                            <i class="fa fa-cog"></i> Conf
+                                        </a>
+                                        <a href="{{ backpack_url('vps/server/docker/config'.'?server_id='.$server_id.'&docker_name='.$docker['name'].'&type=qrcode') }}" class="btn btn-xs btn-default">
+                                            <i class="fa fa-qrcode"></i> QR
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
