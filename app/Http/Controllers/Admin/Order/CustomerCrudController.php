@@ -47,6 +47,7 @@ class CustomerCrudController extends CrudController
                 'name' => 'facebook_id',
                 'label' => 'Facebook ID',
                 'type' => 'text',
+                'limit' => 100
             ],
             [
                 'name' => 'email',
