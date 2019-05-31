@@ -441,7 +441,9 @@ class ServerCrudController extends CrudController
         $command = "bash $shell $ip $index $path";
 
         try {
-            shell_exec("$command 2>&1");
+            $result = shell_exec("$command 2>&1");
+
+            Log::debug('Shell output: '. $result);
 
             $connection = ssh2_connect($ip, $ssh_port);
             ssh2_auth_password($connection, $ssh_user, $ssh_pwd);
