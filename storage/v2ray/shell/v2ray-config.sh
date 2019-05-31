@@ -126,11 +126,14 @@ export_qrcode()
 	if [ ! -d ${path} ]; then
 		mkdir -p ${path}
 	fi
-	if [[ "$OSTYPE" == "darwin"* ]]; then
+	if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # Linux
+        local vmess="vmess://$(cat /usr/local/etc/v2ray/vmess_qr.json | base64 -w 0)"
+	elif [[ "$OSTYPE" == "darwin"* ]]; then
 	    # Mac OSX
         local vmess="vmess://$(cat /usr/local/etc/v2ray/vmess_qr.json | base64 -b 0)"
     else
-        # Linux
+        # Unknown.
         local vmess="vmess://$(cat /usr/local/etc/v2ray/vmess_qr.json | base64 -w 0)"
     fi
 	link="http://api.jeffhsiu.com/qrcode/create?size=460&error=Q&text=${vmess}"
