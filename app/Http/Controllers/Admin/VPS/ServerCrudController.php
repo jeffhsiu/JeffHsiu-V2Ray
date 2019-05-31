@@ -443,7 +443,7 @@ class ServerCrudController extends CrudController
         try {
             $result = shell_exec("$command 2>&1");
 
-            Log::debug('Shell output: '. $result);
+            Log::debug('Docker redo shell output: '.PHP_EOL. $result);
 
             $connection = ssh2_connect($ip, $ssh_port);
             ssh2_auth_password($connection, $ssh_user, $ssh_pwd);
