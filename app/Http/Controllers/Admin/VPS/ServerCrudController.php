@@ -441,9 +441,7 @@ class ServerCrudController extends CrudController
         $command = "bash $shell $ip $index $path";
 
         try {
-            $result = shell_exec("$command 2>&1");
-
-            Log::debug('Docker redo shell output: '.PHP_EOL. $result);
+            shell_exec("$command 2>&1");
 
             $connection = ssh2_connect($ip, $ssh_port);
             ssh2_auth_password($connection, $ssh_user, $ssh_pwd);
