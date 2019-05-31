@@ -20,6 +20,7 @@ Route::group([
         Route::get('server/stats/{server_id}', 'ServerCrudController@stats');
         Route::get('server/docker/start', 'ServerCrudController@dockerStart');
         Route::get('server/docker/stop', 'ServerCrudController@dockerStop');
+        Route::get('server/docker/redo', 'ServerCrudController@dockerRedo');
         Route::get('server/docker/config', 'ServerCrudController@getV2RayConfig');
 
         CRUD::resource('account', 'AccountCrudController', ['middleware' => 'permission:vps-account']);

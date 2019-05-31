@@ -324,7 +324,8 @@ class ServerCrudController extends CrudController
         foreach ($data['dockers'] as &$docker) {
             $order = Order::where('server_id', $server->id)
                 ->where('docker_name', $docker['name'])
-                ->orderBy('end_date')
+                ->where('status', Order::STATUS_ENABLE)
+                ->orderBy('end_date', 'desc')
                 ->first();
             if ($order) {
                 $docker['customer'] = '<a href="'.backpack_url('order/order/'.$order->id).'">'.$order->customer->name.'</a>';
@@ -411,6 +412,70 @@ class ServerCrudController extends CrudController
         }
 
         Alert::success("Docker stop success!")->flash();
+        return redirect()->back();
+    }
+
+    /**
+     * 重刷Docker
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @author Jeff Lin
+     */
+    public function dockerRedo(Request $request)
+    {
+        $server = Server::find($request->server_id);
+        if ( !$server) {
+            Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
+            return redirect()->back();
+        }
+
+        $shell = storage_path('v2ray/shell/v2ray-config.sh');
+        $ip = $server->ip;
+        $ssh_port = $server->ssh_port;
+        $ssh_user = 'root';
+        $ssh_pwd = $server->ssh_pwd;
+        $index = substr($request->docker_name, -2);
+        $port = 5550 + $index;
+        $path = storage_path("v2ray/account/$ip");
+        $command = "bash $shell $ip $index $path";
+
+        try {
+            shell_exec("$command 2>&1");
+
+            $connection = ssh2_connect($ip, $ssh_port);
+            ssh2_auth_password($connection, $ssh_user, $ssh_pwd);
+
+            // scp v2ray config
+            ssh2_scp_send($connection,
+                '/usr/local/etc/v2ray/config.json',
+                '/etc/v2ray/config-'.$index.'.json');
+
+            // remove docker and exec docker run command
+            ssh2_exec($connection, 'docker rm -f v2ray-'.$index.' v2ray-'.($index+0));
+            ssh2_exec($connection, "docker run -d --name=v2ray-$index -v /etc/v2ray:/etc/v2ray \
+            -p $port:$port --memory=80M --restart=always v2ray/official  \
+            v2ray -config=/etc/v2ray/config-$index.json");
+
+            ssh2_exec($connection, 'exit');
+            unset($connection);
+
+            // rm local config file
+            shell_exec("rm -f /usr/local/etc/v2ray/vmess_qr.json /usr/local/etc/v2ray/config.json 2>&1");
+
+        } catch (\Exception $exception) {
+            shell_exec("rm -f /usr/local/etc/v2ray/vmess_qr.json /usr/local/etc/v2ray/config.json");
+            Log::error('Docker redo failed. error: '.$exception->getMessage());
+            Alert::error("Docker redo failed. <br/> See the detail from log.")->flash();
+            return redirect()->back();
+        }
+
+        // Disable關聯的訂單
+        Order::where('server_id', $server->id)
+            ->where('docker_name', $request->docker_name)
+            ->update(['status' => Order::STATUS_DISABLE]);
+
+        Alert::success("Docker redo success!")->flash();
         return redirect()->back();
     }
 

@@ -130,15 +130,21 @@
                                     </td>
                                     <td style="min-width: 185px">
                                         @if(substr($docker['status'], 0, 2) == 'Up')
-                                            <a href="{{ backpack_url('vps/server/docker/stop'.'?server_id='.$server_id.'&container_id='.$docker['container_id']) }}" class="btn btn-xs btn-default">
+                                            <a data-toggle="modal" data-target="#confirmModal"
+                                               data-action="stop" data-container="{{ $docker['container_id'] }}"data-docker-name="{{ $docker['name'] }}"
+                                               class="btn btn-xs btn-default confirm-modal">
                                                 <i class="fa fa-stop-circle"></i> Stop
                                             </a>
                                         @else
-                                            <a href="{{ backpack_url('vps/server/docker/start'.'?server_id='.$server_id.'&container_id='.$docker['container_id']) }}" class="btn btn-xs btn-default">
+                                            <a data-toggle="modal" data-target="#confirmModal"
+                                               data-action="start" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
+                                               class="btn btn-xs btn-default confirm-modal">
                                                 <i class="fa fa-play-circle"></i> Start
                                             </a>
                                         @endif
-                                        <a href="{{ backpack_url('vps/server/docker/redo'.'?server_id='.$server_id.'&container_id='.$docker['container_id']) }}" class="btn btn-xs btn-default">
+                                        <a data-toggle="modal" data-target="#confirmModal"
+                                           data-action="redo" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
+                                           class="btn btn-xs btn-default confirm-modal">
                                             <i class="fa fa-refresh"></i> Redo
                                         </a>
                                         <a href="{{ backpack_url('vps/server/docker/config'.'?server_id='.$server_id.'&docker_name='.$docker['name'].'&type=txt') }}" class="btn btn-xs btn-default">
@@ -220,6 +226,35 @@
 
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title">Redo Docker</h3>
+                </div>
+                <form id="dockerActionForm" method="get">
+                    <div class="modal-body">
+                        <input type="hidden" name="server_id" value="{{ $server_id }}">
+                        <input type="hidden" name="container_id" value="">
+                        <input type="hidden" name="docker_name" value="">
+                        <h4 class="padding-10">Are you sure you want to redo the docker?</h4>
+                        <h5 style="padding-left: 30px;"></h5>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="loading" class="ld-over-full-inverse">
+                            <div class="ld ld-ring ld-spin" style="font-size:3em"></div>
+                        </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button id="modalSubmit" type="submit" class="btn btn-warning ">Yes</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
 @endsection
 
 @section('after_styles')
@@ -229,6 +264,8 @@
 
     <link rel="stylesheet" href="{{ asset('vendor/backpack/crud/css/crud.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/backpack/crud/css/show.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/loading/loading.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/loading/loading-btn.css') }}"/>
 @endsection
 
 @section('after_scripts')
@@ -267,6 +304,33 @@
                     { responsivePriority: 4, targets: -1 },
                 ]
             });
+
+            $('.confirm-modal').click(function() {
+                var action = String($(this).data('action'));
+                var url = "{{ backpack_url('vps/server/docker') }}";
+                $(".modal-title").html("Docker " + capitalizeFirstLetter(action));
+                $(".modal-body h4").html("Are you sure you want to " + capitalizeFirstLetter(action) + " the docker?");
+                $("#dockerActionForm").attr('action', url + "/" + action);
+                $('input[name="container_id"]').val($(this).data('container'));
+                $('input[name="docker_name"]').val($(this).data('docker-name'));
+                if (action == "redo") {
+                    $(".modal-body h5").html("The associated user orders wiil be set to Disable and the config will be renewed.");
+                } else {
+                    $(".modal-body h5").html("");
+                }
+            });
+
+            $('#modalSubmit').click(function (e) {
+                e.preventDefault();
+                $('#loading').toggleClass('running');
+                $('#modalSubmit').attr('disabled', true);
+                $('#dockerActionForm').submit();
+            })
         });
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
     </script>
 @endsection
