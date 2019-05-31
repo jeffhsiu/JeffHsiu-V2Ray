@@ -507,6 +507,8 @@ class ServerCrudController extends CrudController
                 return redirect()->back();
                 break;
         }
-        return response()->file($path);
+
+        $headers = ['Cache-Control' => 'no-cache'];
+        return response()->file($path, $headers);
     }
 }
