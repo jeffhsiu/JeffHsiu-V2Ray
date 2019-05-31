@@ -131,7 +131,7 @@
                                     <td style="min-width: 185px">
                                         @if(substr($docker['status'], 0, 2) == 'Up')
                                             <a data-toggle="modal" data-target="#confirmModal"
-                                               data-action="stop" data-container="{{ $docker['container_id'] }}"data-docker-name="{{ $docker['name'] }}"
+                                               data-action="stop" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
                                                class="btn btn-xs btn-default confirm-modal">
                                                 <i class="fa fa-stop-circle"></i> Stop
                                             </a>
@@ -233,14 +233,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3 class="modal-title">Redo Docker</h3>
+                    <h3 class="modal-title"></h3>
                 </div>
                 <form id="dockerActionForm" method="get">
                     <div class="modal-body">
                         <input type="hidden" name="server_id" value="{{ $server_id }}">
                         <input type="hidden" name="container_id" value="">
                         <input type="hidden" name="docker_name" value="">
-                        <h4 class="padding-10">Are you sure you want to redo the docker?</h4>
+                        <h4 class="padding-10"></h4>
                         <h5 style="padding-left: 30px;"></h5>
                     </div>
                     <div class="modal-footer">
@@ -280,7 +280,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#docker_table').DataTable({
+            $("#docker_table").DataTable({
                 paging: false,
                 searching: false,
                 info: false,
@@ -293,7 +293,7 @@
                 ]
             });
 
-            $('#docker_stats_table').DataTable({
+            $("#docker_stats_table").DataTable({
                 paging: false,
                 searching: false,
                 info: false,
@@ -305,8 +305,8 @@
                 ]
             });
 
-            $('.confirm-modal').click(function() {
-                var action = String($(this).data('action'));
+            $(document).on("click", ".confirm-modal", function() {
+                var action = $(this).data('action');
                 var url = "{{ backpack_url('vps/server/docker') }}";
                 $(".modal-title").html("Docker " + capitalizeFirstLetter(action));
                 $(".modal-body h4").html("Are you sure you want to " + capitalizeFirstLetter(action) + " the docker?");
@@ -320,7 +320,7 @@
                 }
             });
 
-            $('#modalSubmit').click(function (e) {
+            $("#modalSubmit").click(function (e) {
                 e.preventDefault();
                 $('#loading').toggleClass('running');
                 $('#modalSubmit').attr('disabled', true);
