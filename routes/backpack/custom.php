@@ -11,6 +11,9 @@ Route::group([
     'middleware' => ['web', config('backpack.base.middleware_key', 'admin')],
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
+
+    Route::get('dashboard', 'DashboardController@index')->name('backpack.dashboard');
+
     Route::group([
         'prefix' => 'vps',
         'namespace' => 'VPS',
@@ -22,6 +25,7 @@ Route::group([
         Route::get('server/docker/stop', 'ServerCrudController@dockerStop');
         Route::get('server/docker/redo', 'ServerCrudController@dockerRedo');
         Route::get('server/docker/config', 'ServerCrudController@getV2RayConfig');
+        Route::get('server/list13', 'ServerCrudController@serverList');
 
         CRUD::resource('account', 'AccountCrudController', ['middleware' => 'permission:vps-account']);
     });

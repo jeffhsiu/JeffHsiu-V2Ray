@@ -334,7 +334,7 @@ class ServerCrudController extends CrudController
             }
         }
 
-        return view('vps.server.stats', $data);
+        return view('admin.vps.server.stats', $data);
     }
 
     /**
