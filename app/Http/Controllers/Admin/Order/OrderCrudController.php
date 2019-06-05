@@ -326,6 +326,7 @@ class OrderCrudController extends CrudController
         $this->crud->orderBy('id', 'desc');
 
         $this->crud->allowAccess('show');
+        $this->crud->enableExportButtons();
 
         // add asterisk for fields that are required in OrderRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');
