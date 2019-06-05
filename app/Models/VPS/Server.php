@@ -64,6 +64,18 @@ class Server extends Model
         return decrypt($value);
     }
 
+    public function getProviderStringAttribute()
+    {
+        switch ($this->provider) {
+            case self::PROVIDER_GOOGLE:
+                return 'Google Cloud';
+            case self::PROVIDER_BANDWAGON:
+                return 'Bandwagon';
+            default:
+                return '';
+        }
+    }
+
     /*
     |--------------------------------------------------------------------------
     | MUTATORS

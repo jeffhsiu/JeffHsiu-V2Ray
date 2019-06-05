@@ -11,6 +11,7 @@ use App\Http\Requests\VPS\ServerRequest as StoreRequest;
 use App\Http\Requests\VPS\ServerRequest as UpdateRequest;
 use Backpack\CRUD\CrudPanel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Prologue\Alerts\Facades\Alert;
 
@@ -510,5 +511,39 @@ class ServerCrudController extends CrudController
 
         $headers = ['Cache-Control' => 'no-cache'];
         return response()->file($path, $headers);
+    }
+
+    public function serverOrderList(Request $request)
+    {
+        $data = array();
+        $servers = array();
+        $paginate = Server::selectRaw('server.id AS server_id, COUNT(server.id) as count' )
+            ->leftJoin(DB::raw('(SELECT server_id FROM `order` WHERE status = '.Order::STATUS_ENABLE.') AS o '),
+                'server.id', '=', 'o.server_id')
+            ->groupBy('server.id')
+            ->orderBy('count')
+            ->paginate(5);
+
+        foreach ($paginate as $item) {
+            $server = Server::find($item->server_id);
+            $dockers = array();
+            for ($i = 1; $i <= 10; $i++) {
+                $docker_name = 'v2ray-'.str_pad($i,2,"0",STR_PAD_LEFT);
+                $order = Order::where('server_id', $server->id)
+                    ->where('docker_name', $docker_name)
+                    ->where('status', Order::STATUS_ENABLE)
+                    ->orderBy('end_date', 'desc')
+                    ->first();
+                $dockers[$i]['name'] = $docker_name;
+                $dockers[$i]['order'] = $order;
+            }
+            $server->dockers = $dockers;
+            $servers[] = $server;
+        }
+
+        $data['paginate'] = $paginate;
+        $data['servers'] = $servers;
+
+        return view('admin.vps.server.order-list', $data);
     }
 }

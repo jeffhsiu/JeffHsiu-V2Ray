@@ -85,7 +85,7 @@ create_vmess_URL_config()
 	cat << EOF > /usr/local/etc/v2ray/vmess_qr.json
 {
 	"v": "2",
-	"ps": "wechat:fastrabbit666-${index}",
+	"ps": "${index}-wechat:fastrabbit666",
 	"add": "${ip}",
 	"port": "${port}",
 	"id": "${v2ray_id}",

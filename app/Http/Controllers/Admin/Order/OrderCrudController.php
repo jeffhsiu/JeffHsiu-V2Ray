@@ -12,6 +12,7 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use App\Http\Requests\Order\OrderRequest as StoreRequest;
 use App\Http\Requests\Order\OrderRequest as UpdateRequest;
 use Backpack\CRUD\CrudPanel;
+use Illuminate\Support\Facades\Request;
 use Prologue\Alerts\Facades\Alert;
 
 /**
@@ -188,6 +189,7 @@ class OrderCrudController extends CrudController
                 'entity' => 'server', // the method that defines the relationship in your Model
                 'attribute' => 'ip', // foreign key attribute that is shown to user
                 'model' => 'App\Models\VPS\Server', // foreign key model
+                'default' => Request::has('server_id') ? Request::get('server_id') : 1
             ],
             [
                 'name' => 'docker_name', // The db column name
@@ -205,6 +207,7 @@ class OrderCrudController extends CrudController
                     'v2ray-09' => 'v2ray-09',
                     'v2ray-10' => 'v2ray-10',
                 ],
+                'default' => Request::has('docker_name') ? Request::get('docker_name') : 'v2ray-01'
             ],
             [
                 'name' => 'price', // The db column name
@@ -329,6 +332,16 @@ class OrderCrudController extends CrudController
         $this->crud->setRequiredFields(UpdateRequest::class, 'edit');
     }
 
+    public function show($id)
+    {
+        $content = parent::show($id);
+
+        $this->crud->addButtonFromView('line', 'config', 'config', 'end');
+        $this->crud->addButtonFromView('line', 'qrcode', 'qrcode', 'end');
+
+        return $content;
+    }
+
     public function store(StoreRequest $request)
     {
         $order = Order::where('server_id', $request->server_id)
@@ -343,7 +356,8 @@ class OrderCrudController extends CrudController
         $redirect_location = parent::storeCrud($request);
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
-        return $redirect_location;
+        $redirectUrl = $this->crud->route.'/'.$this->crud->entry->id;
+        return redirect($redirectUrl);
     }
 
     public function update(UpdateRequest $request)

@@ -16,6 +16,7 @@
     <ul class="treeview-menu">
         <li><a href="{{ backpack_url('vps/account') }}"><i class="fa fa-user"></i> <span>Accounts</span></a></li>
         <li><a href="{{ backpack_url('vps/server') }}"><i class="fa fa-server"></i> <span>Servers</span></a></li>
+        <li><a href="{{ backpack_url('vps/server/order-list') }}"><i class="fa fa-list-ul"></i> <span>Server List</span></a></li>
     </ul>
 </li>
 <!-- Order -->

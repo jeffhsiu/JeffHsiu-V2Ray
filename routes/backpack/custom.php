@@ -19,15 +19,15 @@ Route::group([
         'namespace' => 'VPS',
         'middleware' => ['permission:vps']
     ], function () {
+        CRUD::resource('account', 'AccountCrudController', ['middleware' => 'permission:vps-account']);
+
+        Route::get('server/order-list', 'ServerCrudController@serverOrderList');
         CRUD::resource('server', 'ServerCrudController', ['middleware' => 'permission:vps-server']);
         Route::get('server/stats/{server_id}', 'ServerCrudController@stats');
         Route::get('server/docker/start', 'ServerCrudController@dockerStart');
         Route::get('server/docker/stop', 'ServerCrudController@dockerStop');
         Route::get('server/docker/redo', 'ServerCrudController@dockerRedo');
         Route::get('server/docker/config', 'ServerCrudController@getV2RayConfig');
-        Route::get('server/list13', 'ServerCrudController@serverList');
-
-        CRUD::resource('account', 'AccountCrudController', ['middleware' => 'permission:vps-account']);
     });
 
     Route::group([

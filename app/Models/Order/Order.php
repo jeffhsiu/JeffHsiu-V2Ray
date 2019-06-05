@@ -87,6 +87,27 @@ class Order extends Model
     | ACCESORS
     |--------------------------------------------------------------------------
     */
+    public function getTypeStringAttribute()
+    {
+        switch ($this->type) {
+            case self::TYPE_PAID:
+                return 'Paid ';
+            case self::TYPE_TRIAL:
+                return 'Trial';
+            default:
+                return '';
+        }
+    }
+
+    public function getStartDateNotimeAttribute()
+    {
+        return explode(' ', $this->start_date)[0];
+    }
+
+    public function getEndDateNotimeAttribute()
+    {
+        return explode(' ', $this->end_date)[0];
+    }
 
     /*
     |--------------------------------------------------------------------------
