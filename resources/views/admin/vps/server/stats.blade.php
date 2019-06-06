@@ -177,16 +177,16 @@
                     <div class="box-body no-border">
                         <table id="docker_stats_table" class="table table-striped table-hover responsive" style="width: 100%;">
                             <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Port</th>
-                                <th>Container ID</th>
-                                <th>Created</th>
-                                <th>Status</th>
-                                <th>CPU %</th>
-                                <th>Mem / Limit</th>
-                                <th>Net I/O</th>
-                            </tr>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Port</th>
+                                    <th>Container ID</th>
+                                    <th>Created</th>
+                                    <th>Status</th>
+                                    <th>CPU %</th>
+                                    <th>Mem / Limit</th>
+                                    <th>Net I/O</th>
+                                </tr>
                             </thead>
                             <tbody>
                             @foreach($dockers as $docker)

@@ -35,11 +35,10 @@
                         </div>
                     </div>
                     <div class="box-body no-border">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-hover responsive" style="width: 100%;">
                             <thead>
                                 <tr>
-                                    <th>IP</th>
-                                    <th>Docker name</th>
+                                    <th>Docker</th>
                                     <th>Customer</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
@@ -48,12 +47,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach($server['dockers'] as $key => $docker)
+                            @foreach($server['dockers'] as $docker)
                                 <tr>
-                                @if($key == 1)
-                                    <td rowspan="10" style="text-align:center;vertical-align:middle;width: 115px;">{{ $server['ip'] }}</td>
-                                @endif
-                                    <td>{{ $docker['name'] }}
+                                    <td>{{ $docker['name'] }}</td>
                                     <td>{!! is_null($docker['order']) ? '-' : '<a href="'.backpack_url('order/order/'.$docker['order']->id).'">'.$docker['order']->customer->name.'</a>' !!}</td>
                                     <td>{{ is_null($docker['order']) ? '-' : $docker['order']->start_date_notime }}</td>
                                     <td>{{ is_null($docker['order']) ? '-' : $docker['order']->end_date_notime }}</td>
@@ -101,31 +97,16 @@
 
     <script>
         $(document).ready(function() {
-            $("#docker_table").DataTable({
+            $(".table").DataTable({
                 paging: false,
                 searching: false,
                 info: false,
                 columnDefs: [
                     { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 2, targets: 3 },
-                    { responsivePriority: 3, targets: -2 },
-                    { responsivePriority: 4, targets: -1 },
-                    { responsivePriority: 5, targets: 4 },
+                    { responsivePriority: 2, targets: 1 },
+                    { responsivePriority: 3, targets: -1 },
                 ]
             });
-
-            $("#docker_stats_table").DataTable({
-                paging: false,
-                searching: false,
-                info: false,
-                columnDefs: [
-                    { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 2, targets: -3 },
-                    { responsivePriority: 3, targets: -2 },
-                    { responsivePriority: 4, targets: -1 },
-                ]
-            });
-
         });
 
     </script>
