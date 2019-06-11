@@ -15,7 +15,7 @@
 @endsection
 
 @section('content')
-    <a href="{{ backpack_url('vps/server')}}" class="hidden-print"><i class="fa fa-angle-double-left"></i> {{ trans('backpack::crud.back_to_all') }} <span>Server</span></a>
+    <a href="{{ backpack_url('vps/server') }}" class="hidden-print"><i class="fa fa-angle-double-left"></i> {{ trans('backpack::crud.back_to_all') }} <span>Server</span></a>
 
     <a href="javascript: window.print();" class="pull-right hidden-print"><i class="fa fa-print"></i></a>
     <div class="row">
@@ -56,7 +56,7 @@
                                     <td>{{ is_null($docker['order']) ? '-' : $docker['order']->type_string }}</td>
                                     <td>
                                         @if(is_null($docker['order']))
-                                        <a href="{{ backpack_url('order/order/create'.'?server_id='.$server['id'].'&docker_name='.$docker['name']) }}" class="btn btn-xs btn-default">
+                                        <a href="{{ backpack_url('order/customer/create'.'?server_id='.$server['id'].'&docker_name='.$docker['name']) }}" class="btn btn-xs btn-default">
                                             <i class="fa fa-first-order"></i> Create Order
                                         </a>
                                         @endif

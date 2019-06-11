@@ -18,7 +18,7 @@ return [
 
     // When the user chooses "save and back" or "save and new", show a bubble
     // for the fact that the default save action has been changed?
-    'show_save_action_change' => true, //options: true, false
+    'show_save_action_change' => false, //options: true, false
 
     // When using tabbed forms (create & update), what kind of tabs would you like?
     'tabs_type' => 'horizontal', //options: horizontal, vertical
