@@ -133,13 +133,8 @@ class OrderCrudController extends CrudController
                 })
             ],
             [
-                // 1-n relationship
-                'name' => 'distributor_id', // the column that contains the ID of that connected entity;
-                'label' => 'Distributor', // Table column heading
-                'type' => 'select2-notnull',
-                'entity' => 'distributor', // the method that defines the relationship in your Model
-                'attribute' => 'name', // foreign key attribute that is shown to user
-                'model' => 'App\Models\Order\Distributor', // foreign key model
+                'name' => 'distributor_id',
+                'type' => 'hidden',
             ],
             [
                 'name' => 'status',
@@ -354,7 +349,7 @@ class OrderCrudController extends CrudController
             return redirect()->back();
         }
         // your additional operations before save here
-        $redirect_location = parent::storeCrud($request);
+        parent::storeCrud($request);
         // your additional operations after save here
         // use $this->data['entry'] or $this->crud->entry
         $redirectUrl = $this->crud->route.'/'.$this->crud->entry->id;

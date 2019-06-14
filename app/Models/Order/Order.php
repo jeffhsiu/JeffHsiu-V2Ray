@@ -114,6 +114,12 @@ class Order extends Model
     | MUTATORS
     |--------------------------------------------------------------------------
     */
+    public function setDistributorIdAttribute()
+    {
+        $customer = Customer::find($this->attributes['customer_id']);
+        $this->attributes['distributor_id'] = $customer->distributor_id;
+    }
+
     public function setPriceAttribute($value)
     {
         $this->attributes['price'] = empty($value) ? 0 : $value;

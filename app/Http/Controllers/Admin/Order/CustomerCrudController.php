@@ -40,6 +40,13 @@ class CustomerCrudController extends CrudController
                 'type' => 'text',
             ],
             [
+                'name' => 'distributor_id', // The db column name
+                'label' => 'Distributor', // Table column heading
+                'type' => 'model_function',
+                'function_name' => 'getDistributorLink',
+                'limit' => 1000
+            ],
+            [
                 'name' => 'wechat_id',
                 'label' => 'Wechat ID',
                 'type' => 'text',
@@ -67,6 +74,15 @@ class CustomerCrudController extends CrudController
                 'name' => 'name',
                 'label' => 'Name',
                 'type' => 'text',
+            ],
+            [
+                // 1-n relationship
+                'name' => 'distributor_id', // the column that contains the ID of that connected entity;
+                'label' => 'Distributor', // Table column heading
+                'type' => 'select2-notnull',
+                'entity' => 'distributor', // the method that defines the relationship in your Model
+                'attribute' => 'name', // foreign key attribute that is shown to user
+                'model' => 'App\Models\Order\Distributor', // foreign key model
             ],
             [
                 'name' => 'wechat_id',

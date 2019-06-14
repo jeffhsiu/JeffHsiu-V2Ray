@@ -39,6 +39,11 @@ class Distributor extends Model
         return $this->hasMany('App\Models\Order\Order');
     }
 
+    public function customers()
+    {
+        return $this->hasMany('App\Models\Order\Customer');
+    }
+
 
     /*
     |--------------------------------------------------------------------------

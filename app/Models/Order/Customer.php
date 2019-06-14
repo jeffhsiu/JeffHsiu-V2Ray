@@ -28,6 +28,11 @@ class Customer extends Model
     | FUNCTIONS
     |--------------------------------------------------------------------------
     */
+    public function getDistributorLink() {
+        $distributor = Distributor::find($this->distributor_id);
+        $url = backpack_url('order/distributor/'.$distributor->id);
+        return '<a href="'.$url.'">'.$distributor->name.'</a>';
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -37,6 +42,11 @@ class Customer extends Model
     public function orders()
     {
         return $this->hasMany('App\Models\Order\Order');
+    }
+
+    public function distributor()
+    {
+        return $this->belongsTo('App\Models\Order\Distributor');
     }
 
     /*
