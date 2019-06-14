@@ -6,7 +6,7 @@ use App\Models\Order\Distributor;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
 // VALIDATION: change the requests to match your own file names if you need form validation
-use App\Http\Requests\Order\CustomerRequest as StoreRequest;
+use App\Http\Requests\Order\CustomerCreateRequest as StoreRequest;
 use App\Http\Requests\Order\CustomerRequest as UpdateRequest;
 use Backpack\CRUD\CrudPanel;
 use Illuminate\Support\Facades\Request;
