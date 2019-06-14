@@ -252,7 +252,7 @@
                         <div id="loading" class="ld-over-full-inverse">
                             <div class="ld ld-ring ld-spin" style="font-size:3em"></div>
                         </div>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <button id="modalSubmit" type="submit" class="btn btn-warning ">Yes</button>
                     </div>
                 </form>
@@ -315,6 +315,7 @@
                 var url = "{{ backpack_url('vps/server/docker') }}";
                 $(".modal-title").html("Docker " + capitalizeFirstLetter(action));
                 $(".modal-body h4").html("Are you sure you want to " + capitalizeFirstLetter(action) + " the docker?");
+                $("#modalSubmit").html(capitalizeFirstLetter(action));
                 $("#dockerActionForm").attr('action', url + "/" + action);
                 $('input[name="container_id"]').val($(this).data('container'));
                 $('input[name="docker_name"]').val($(this).data('docker-name'));
