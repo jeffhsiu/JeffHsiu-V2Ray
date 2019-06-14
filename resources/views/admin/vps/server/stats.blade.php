@@ -120,39 +120,44 @@
                                         {{ isset($docker['net']) ? $docker['net'] : '-' }}
                                     </td>
                                     <td>
-                                        {{ isset($docker['start_date']) ? $docker['start_date'] : '-'  }}
+                                        {{ $docker['order'] ? strstr($docker['order']->start_date, ' ', true) : '-'  }}
                                     </td>
                                     <td>
-                                        {{ isset($docker['end_date']) ? !empty($docker['end_date']) ? $docker['end_date'] : '~' : '-'  }}
+                                        {{ $docker['order'] ? !empty($docker['order']->end_date) ? strstr($docker['order']->end_date, ' ', true) : '~' : '-'  }}
                                     </td>
                                     <td>
-                                        {!! isset($docker['customer']) ? $docker['customer'] : '-'  !!}
+                                        {!! $docker['order'] ? '<a href="'.backpack_url('order/order/'.$docker['order']->id).'">'.$docker['order']->customer->name : '-'  !!}
                                     </td>
                                     <td style="min-width: 185px">
-                                        @if(substr($docker['status'], 0, 2) == 'Up')
-                                            <a data-toggle="modal" data-target="#confirmModal"
-                                               data-action="stop" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
-                                               class="btn btn-xs btn-default confirm-modal">
-                                                <i class="fa fa-stop-circle"></i> Stop
-                                            </a>
+                                        @if(auth()->user()->hasRole('Distributor')
+                                        && ( !$docker['order'] OR $docker['order']->distributor_id != auth()->user()->distributor->id))
+                                            -
                                         @else
+                                            @if(substr($docker['status'], 0, 2) == 'Up')
+                                                <a data-toggle="modal" data-target="#confirmModal"
+                                                   data-action="stop" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
+                                                   class="btn btn-xs btn-default confirm-modal">
+                                                    <i class="fa fa-stop-circle"></i> Stop
+                                                </a>
+                                            @else
+                                                <a data-toggle="modal" data-target="#confirmModal"
+                                                   data-action="start" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
+                                                   class="btn btn-xs btn-default confirm-modal">
+                                                    <i class="fa fa-play-circle"></i> Start
+                                                </a>
+                                            @endif
                                             <a data-toggle="modal" data-target="#confirmModal"
-                                               data-action="start" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
+                                               data-action="redo" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
                                                class="btn btn-xs btn-default confirm-modal">
-                                                <i class="fa fa-play-circle"></i> Start
+                                                <i class="fa fa-refresh"></i> Redo
+                                            </a>
+                                            <a href="{{ backpack_url('vps/server/docker/config'.'?server_id='.$server_id.'&docker_name='.$docker['name'].'&type=txt') }}" class="btn btn-xs btn-default">
+                                                <i class="fa fa-cog"></i> Conf
+                                            </a>
+                                            <a href="{{ backpack_url('vps/server/docker/config'.'?server_id='.$server_id.'&docker_name='.$docker['name'].'&type=qrcode') }}" class="btn btn-xs btn-default">
+                                                <i class="fa fa-qrcode"></i> QR
                                             </a>
                                         @endif
-                                        <a data-toggle="modal" data-target="#confirmModal"
-                                           data-action="redo" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
-                                           class="btn btn-xs btn-default confirm-modal">
-                                            <i class="fa fa-refresh"></i> Redo
-                                        </a>
-                                        <a href="{{ backpack_url('vps/server/docker/config'.'?server_id='.$server_id.'&docker_name='.$docker['name'].'&type=txt') }}" class="btn btn-xs btn-default">
-                                            <i class="fa fa-cog"></i> Conf
-                                        </a>
-                                        <a href="{{ backpack_url('vps/server/docker/config'.'?server_id='.$server_id.'&docker_name='.$docker['name'].'&type=qrcode') }}" class="btn btn-xs btn-default">
-                                            <i class="fa fa-qrcode"></i> QR
-                                        </a>
                                     </td>
                                 </tr>
                             @endforeach

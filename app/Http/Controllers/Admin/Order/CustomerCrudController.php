@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Order;
 
+use App\Models\Order\Distributor;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
 // VALIDATION: change the requests to match your own file names if you need form validation
@@ -83,6 +84,13 @@ class CustomerCrudController extends CrudController
                 'entity' => 'distributor', // the method that defines the relationship in your Model
                 'attribute' => 'name', // foreign key attribute that is shown to user
                 'model' => 'App\Models\Order\Distributor', // foreign key model
+                'options'   => (function ($query) {
+                    if (auth()->user()->hasRole('Distributor')) {
+                        return $query->where('id', auth()->user()->distributor->id)->get();
+                    } else {
+                        return $query->get();
+                    }
+                }),
             ],
             [
                 'name' => 'wechat_id',
@@ -110,6 +118,11 @@ class CustomerCrudController extends CrudController
                 'type' => 'text',
             ],
         ]);
+
+        // 經銷商只能看到他自己的
+        if (auth()->user()->hasRole('Distributor')) {
+            $this->crud->addClause('where', 'distributor_id', auth()->user()->distributor->id);
+        }
 
         $this->crud->orderBy('id', 'desc');
 

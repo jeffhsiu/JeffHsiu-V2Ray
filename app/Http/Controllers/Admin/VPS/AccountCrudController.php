@@ -94,7 +94,7 @@ class AccountCrudController extends CrudController
     {
         $content = parent::show($id);
 
-        if (backpack_user()->can('vps-account-password')) {
+        if (backpack_user()->can('vps-accounts-password')) {
             $this->crud->addColumn(
                 [
                     'name' => 'password',

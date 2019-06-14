@@ -27,7 +27,7 @@
                 <div class="box box-primary" style="border-top-width: 3px;">
                     <div class="box-header with-border">
                         <h4 class="box-title">
-                            {{ $server['provider_string'] }} - {{ $server['ip'] }}
+                            {{ $server['provider_string'] }} - <a href="{{ backpack_url('vps/server/stats/'.$server['id']) }}">{{ $server['ip'] }}</a>
                         </h4>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -39,6 +39,7 @@
                             <thead>
                                 <tr>
                                     <th>Docker</th>
+                                    <th>Distributor</th>
                                     <th>Customer</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
@@ -50,6 +51,7 @@
                             @foreach($server['dockers'] as $docker)
                                 <tr>
                                     <td>{{ $docker['name'] }}</td>
+                                    <td>{!! is_null($docker['order']) ? '-' : '<a href="'.backpack_url('order/distributor/'.$docker['order']->distributor_id).'">'.$docker['order']->distributor->name.'</a>' !!}</td>
                                     <td>{!! is_null($docker['order']) ? '-' : '<a href="'.backpack_url('order/order/'.$docker['order']->id).'">'.$docker['order']->customer->name.'</a>' !!}</td>
                                     <td>{{ is_null($docker['order']) ? '-' : $docker['order']->start_date_notime }}</td>
                                     <td>{{ is_null($docker['order']) ? '-' : $docker['order']->end_date_notime }}</td>

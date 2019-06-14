@@ -163,6 +163,19 @@ class ServerCrudController extends CrudController
 
         $this->crud->addButtonFromView('line', 'stats', 'server-stats', 'beginning');
 
+        if ( !auth()->user()->can('vps-servers-sshpwd')) {
+            $this->crud->removeField('ssh_pwd');
+        }
+        if ( !auth()->user()->can('vps-servers-create')) {
+            $this->crud->denyAccess('create');
+        }
+        if ( !auth()->user()->can('vps-servers-update')) {
+            $this->crud->denyAccess('update');
+        }
+        if ( !auth()->user()->can('vps-servers-delete')) {
+            $this->crud->denyAccess('delete');
+        }
+
         // add asterisk for fields that are required in ServerRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');
         $this->crud->setRequiredFields(UpdateRequest::class, 'edit');
@@ -323,16 +336,11 @@ class ServerCrudController extends CrudController
 
         // 對應的訂單記錄
         foreach ($data['dockers'] as &$docker) {
-            $order = Order::where('server_id', $server->id)
+            $docker['order'] = Order::where('server_id', $server->id)
                 ->where('docker_name', $docker['name'])
                 ->where('status', Order::STATUS_ENABLE)
                 ->orderBy('end_date', 'desc')
                 ->first();
-            if ($order) {
-                $docker['customer'] = '<a href="'.backpack_url('order/order/'.$order->id).'">'.$order->customer->name.'</a>';
-                $docker['start_date'] = strstr($order->start_date, ' ', true);
-                $docker['end_date'] = strstr($order->end_date, ' ', true);
-            }
         }
 
         return view('admin.vps.server.stats', $data);
@@ -347,6 +355,18 @@ class ServerCrudController extends CrudController
      */
     public function dockerStart(Request $request)
     {
+        // 供應商只能操作自己的訂單
+        if (auth()->user()->hasRole('Distributor')) {
+            $order = Order::where('server_id', $request->server_id)
+                ->where('docker_name', $request->docker_name)
+                ->where('status', Order::STATUS_ENABLE)
+                ->orderBy('end_date', 'desc')
+                ->first();
+            if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
+                return abort(403);
+            }
+        }
+
         $server = Server::find($request->server_id);
         if ( !$server) {
             Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
@@ -386,6 +406,18 @@ class ServerCrudController extends CrudController
      */
     public function dockerStop(Request $request)
     {
+        // 供應商只能操作自己的訂單
+        if (auth()->user()->hasRole('Distributor')) {
+            $order = Order::where('server_id', $request->server_id)
+                ->where('docker_name', $request->docker_name)
+                ->where('status', Order::STATUS_ENABLE)
+                ->orderBy('end_date', 'desc')
+                ->first();
+            if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
+                return abort(403);
+            }
+        }
+
         $server = Server::find($request->server_id);
         if ( !$server) {
             Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
@@ -425,6 +457,18 @@ class ServerCrudController extends CrudController
      */
     public function dockerRedo(Request $request)
     {
+        // 供應商只能操作自己的訂單
+        if (auth()->user()->hasRole('Distributor')) {
+            $order = Order::where('server_id', $request->server_id)
+                ->where('docker_name', $request->docker_name)
+                ->where('status', Order::STATUS_ENABLE)
+                ->orderBy('end_date', 'desc')
+                ->first();
+            if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
+                return abort(403);
+            }
+        }
+
         $server = Server::find($request->server_id);
         if ( !$server) {
             Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
@@ -489,6 +533,18 @@ class ServerCrudController extends CrudController
      */
     public function getV2RayConfig(Request $request)
     {
+        // 供應商只能查看自己的訂單
+        if (auth()->user()->hasRole('Distributor')) {
+            $order = Order::where('server_id', $request->server_id)
+                ->where('docker_name', $request->docker_name)
+                ->where('status', Order::STATUS_ENABLE)
+                ->orderBy('end_date', 'desc')
+                ->first();
+            if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
+                return abort(403);
+            }
+        }
+
         $server = Server::find($request->server_id);
         if ( !$server) {
             Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
@@ -513,6 +569,13 @@ class ServerCrudController extends CrudController
         return response()->file($path, $headers);
     }
 
+    /**
+     * Server order list page
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @author Jeff Lin
+     */
     public function serverOrderList(Request $request)
     {
         $data = array();

@@ -19,15 +19,15 @@ Route::group([
         'namespace' => 'VPS',
         'middleware' => ['permission:vps']
     ], function () {
-        CRUD::resource('account', 'AccountCrudController', ['middleware' => 'permission:vps-account']);
+        Route::get('server/order-list', 'ServerCrudController@serverOrderList')->middleware(['permission:vps-server-list']);
 
-        Route::get('server/order-list', 'ServerCrudController@serverOrderList');
-        CRUD::resource('server', 'ServerCrudController', ['middleware' => 'permission:vps-server']);
-        Route::get('server/stats/{server_id}', 'ServerCrudController@stats');
-        Route::get('server/docker/start', 'ServerCrudController@dockerStart');
-        Route::get('server/docker/stop', 'ServerCrudController@dockerStop');
-        Route::get('server/docker/redo', 'ServerCrudController@dockerRedo');
-        Route::get('server/docker/config', 'ServerCrudController@getV2RayConfig');
+        CRUD::resource('account', 'AccountCrudController', ['middleware' => 'permission:vps-accounts']);
+        CRUD::resource('server', 'ServerCrudController', ['middleware' => 'permission:vps-servers']);
+        Route::get('server/stats/{server_id}', 'ServerCrudController@stats')->middleware(['permission:vps-servers']);
+        Route::get('server/docker/start', 'ServerCrudController@dockerStart')->middleware(['permission:vps-servers']);
+        Route::get('server/docker/stop', 'ServerCrudController@dockerStop')->middleware(['permission:vps-servers']);
+        Route::get('server/docker/redo', 'ServerCrudController@dockerRedo')->middleware(['permission:vps-servers']);
+        Route::get('server/docker/config', 'ServerCrudController@getV2RayConfig')->middleware(['permission:vps-servers']);
     });
 
     Route::group([
@@ -35,8 +35,8 @@ Route::group([
         'namespace' => 'Order',
         'middleware' => ['permission:order']
     ], function () {
-        CRUD::resource('distributor', 'DistributorCrudController', ['middleware' => 'permission:order-distributor']);
-        CRUD::resource('customer', 'CustomerCrudController', ['middleware' => 'permission:order-customer']);
-        CRUD::resource('order', 'OrderCrudController', ['middleware' => 'permission:order-order']);
+        CRUD::resource('distributor', 'DistributorCrudController', ['middleware' => 'permission:order-distributors']);
+        CRUD::resource('customer', 'CustomerCrudController', ['middleware' => 'permission:order-customers']);
+        CRUD::resource('order', 'OrderCrudController', ['middleware' => 'permission:order-orders']);
     });
 }); // this should be the absolute last line of this file

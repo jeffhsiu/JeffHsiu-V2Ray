@@ -129,7 +129,13 @@ class OrderCrudController extends CrudController
                 'attribute' => 'name', // foreign key attribute that is shown to user
                 'model' => 'App\Models\Order\Customer', // foreign key model
                 'options'   => (function ($query) {
-                    return $query->orderBy('id', 'desc')->get();
+                    if (auth()->user()->hasRole('Distributor')) {
+                        return $query->where('distributor_id', auth()->user()->distributor->id)
+                            ->orderBy('id', 'desc')
+                            ->get();
+                    } else {
+                        return $query->orderBy('id', 'desc')->get();
+                    }
                 })
             ],
             [
@@ -318,6 +324,11 @@ class OrderCrudController extends CrudController
                 }
             });
 
+        // 經銷商只能看到他自己的
+        if (auth()->user()->hasRole('Distributor')) {
+            $this->crud->addClause('where', 'distributor_id', auth()->user()->distributor->id);
+        }
+
         $this->crud->orderBy('id', 'desc');
 
         $this->crud->allowAccess('show');
@@ -330,6 +341,11 @@ class OrderCrudController extends CrudController
 
     public function show($id)
     {
+        if (auth()->user()->hasRole('Distributor')
+            && $this->crud->getEntry($id)->distributor_id != auth()->user()->distributor->id) {
+            return abort('403');
+        }
+
         $content = parent::show($id);
 
         $this->crud->addButtonFromView('line', 'config', 'config', 'end');
