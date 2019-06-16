@@ -105,8 +105,9 @@
                 info: false,
                 columnDefs: [
                     { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 2, targets: 1 },
+                    { responsivePriority: 2, targets: 2 },
                     { responsivePriority: 3, targets: -1 },
+                    { responsivePriority: 4, targets: 1 },
                 ]
             });
         });
