@@ -39,4 +39,12 @@ Route::group([
         CRUD::resource('customer', 'CustomerCrudController', ['middleware' => 'permission:order-customers']);
         CRUD::resource('order', 'OrderCrudController', ['middleware' => 'permission:order-orders']);
     });
+
+    Route::group([
+        'prefix' => 'finance',
+        'namespace' => 'Finance',
+        'middleware' => ['permission:finance']
+    ], function () {
+        CRUD::resource('cost', 'CostCrudController', ['middleware' => 'permission:finance-cost']);
+    });
 }); // this should be the absolute last line of this file

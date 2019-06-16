@@ -86,6 +86,19 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'order-orders'])->assignRole($distributor);
         }
 
+        /*
+         * Finance 權限控制
+         */
+        if ( !Permission::where('name', 'finance')->exists()) {
+            Permission::create(['name' => 'finance'])->assignRole();
+        }
+        if ( !Permission::where('name', 'finance-costs')->exists()) {
+            Permission::create(['name' => 'finance-costs'])->assignRole();
+        }
+        if ( !Permission::where('name', 'finance-settle')->exists()) {
+            Permission::create(['name' => 'finance-settle'])->assignRole();
+        }
+
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     }

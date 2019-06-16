@@ -45,7 +45,7 @@
 <li class="treeview">
     <a href="#"><i class="fa fa-file-text-o"></i> <span>Order</span> <i class="fa fa-angle-left pull-right"></i></a>
     <ul class="treeview-menu">
-        @can('vps-distributors')
+        @can('order-distributors')
         <li><a href="{{ backpack_url('order/distributor') }}"><i class="fa fa-user-secret"></i> <span>Distributors</span></a></li>
         @endcan
         @can('order-customers')
@@ -56,6 +56,21 @@
         @endcan
     </ul>
 </li>
+@endcan
+
+@can('finance')
+    <!-- Finance -->
+    <li class="treeview">
+        <a href="#"><i class="fa fa-money"></i> <span>Finance</span> <i class="fa fa-angle-left pull-right"></i></a>
+        <ul class="treeview-menu">
+            @can('finance-costs')
+                <li><a href="{{ backpack_url('finance/cost') }}"><i class="fa fa-dollar"></i> <span>Costs</span></a></li>
+            @endcan
+            @can('finance-settle')
+                <li><a href="{{ backpack_url('finance/settle') }}"><i class="fa fa-cog"></i> <span>Settle</span></a></li>
+            @endcan
+        </ul>
+    </li>
 @endcan
 
 @can('logs')

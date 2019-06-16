@@ -14,7 +14,6 @@ class Customer extends Model
     | GLOBAL VARIABLES
     |--------------------------------------------------------------------------
     */
-
     protected $table = 'customer';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
