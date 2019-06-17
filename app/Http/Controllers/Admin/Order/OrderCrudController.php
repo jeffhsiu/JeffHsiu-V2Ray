@@ -136,7 +136,8 @@ class OrderCrudController extends CrudController
                     } else {
                         return $query->orderBy('id', 'desc')->get();
                     }
-                })
+                }),
+                'default' => Request::has('customer_id') ? Request::get('customer_id') : Customer::max('id')
             ],
             [
                 'name' => 'distributor_id',
@@ -159,6 +160,7 @@ class OrderCrudController extends CrudController
                     Order::TYPE_TRIAL => 'Trial',
                     Order::TYPE_PAID => 'Paid',
                 ],
+                'default' => Request::has('type') ? Request::get('type') : 2
             ],
             [   // DateTime
                 'name' => 'start_date',
@@ -358,6 +360,9 @@ class OrderCrudController extends CrudController
 
         $this->crud->addButtonFromView('line', 'config', 'config', 'end');
         $this->crud->addButtonFromView('line', 'qrcode', 'qrcode', 'end');
+        if ($this->crud->getEntry($id)->type == Order::TYPE_TRIAL) {
+            $this->crud->addButtonFromView('line', 'paid', 'paid', 'end');
+        }
 
         return $content;
     }
