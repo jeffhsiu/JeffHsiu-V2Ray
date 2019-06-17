@@ -44,4 +44,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Models\Order\Distributor', 'email', 'email');
     }
+
+    public function settlement()
+    {
+        return $this->hasMany('App\Models\Finance\Settlement');
+    }
 }

@@ -76,6 +76,11 @@ class Order extends Model
         return $this->belongsTo('App\Models\VPS\Server');
     }
 
+    public function settlement()
+    {
+        return $this->belongsTo('App\Models\Finance\Settlement');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

@@ -67,7 +67,7 @@
                 <li><a href="{{ backpack_url('finance/cost') }}"><i class="fa fa-dollar"></i> <span>Costs</span></a></li>
             @endcan
             @can('finance-settle')
-                <li><a href="{{ backpack_url('finance/settle') }}"><i class="fa fa-cog"></i> <span>Settle</span></a></li>
+                <li><a href="{{ backpack_url('finance/settlement') }}"><i class="fa fa-bank"></i> <span>Settle</span></a></li>
             @endcan
         </ul>
     </li>

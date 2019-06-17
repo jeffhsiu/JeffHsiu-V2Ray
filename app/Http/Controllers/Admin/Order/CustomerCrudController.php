@@ -140,14 +140,7 @@ class CustomerCrudController extends CrudController
      */
     public function create()
     {
-        $this->crud->hasAccessOrFail('create');
-        $this->crud->setOperation('create');
-
-        // prepare the fields you need to show
-        $this->data['crud'] = $this->crud;
-        $this->data['saveAction'] = $this->getSaveAction();
-        $this->data['fields'] = $this->crud->getCreateFields();
-        $this->data['title'] = $this->crud->getTitle() ?? trans('backpack::crud.add').' '.$this->crud->entity_name;
+        parent::create();
         $this->data['from_server'] = Request::has('server_id') ? true : false;
         $this->data['server_id'] = Request::has('server_id') ? Request::get('server_id') : 1;
         $this->data['docker_name'] = Request::has('docker_name') ? Request::get('docker_name') : 'v2ray-01';

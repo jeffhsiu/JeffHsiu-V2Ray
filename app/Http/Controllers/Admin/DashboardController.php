@@ -16,11 +16,16 @@ class DashboardController extends Controller
         if (auth()->user()->hasRole('Distributor')) {
             $data['order_count'] = Order::where('distributor_id', auth()->user()->distributor->id)->count() + 0;
             $data['customer_count'] = Customer::where('distributor_id', auth()->user()->distributor->id)->count() + 0;
-            $data['revenue'] = Order::where('distributor_id', auth()->user()->distributor->id)->sum('commission') + 0;
+            $data['revenue'] = Order::where('distributor_id', auth()->user()->distributor->id)
+                    ->where('settlement_id', 0)
+                    ->where('type', Order::TYPE_PAID)
+                    ->sum('commission') + 0;
         } else {
             $data['order_count'] = Order::count() + 0;
             $data['customer_count'] = Customer::count() + 0;
-            $data['revenue'] = Order::sum('profit') + 0;
+            $data['revenue'] = Order::where('settlement_id', 0)
+                    ->where('type', Order::TYPE_PAID)
+                    ->sum('profit') + 0;
         }
 
         return view('admin.dashboard', $data);

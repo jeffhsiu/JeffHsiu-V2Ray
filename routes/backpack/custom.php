@@ -46,5 +46,8 @@ Route::group([
         'middleware' => ['permission:finance']
     ], function () {
         CRUD::resource('cost', 'CostCrudController', ['middleware' => 'permission:finance-cost']);
+        CRUD::resource('settlement', 'SettlementCrudController', ['middleware' => 'permission:finance-settle']);
+        Route::get('settle/preview', 'SettlementCrudController@settlePreview')->middleware(['permission:finance-settle']);
+        Route::post('settle', 'SettlementCrudController@settleIncomes')->middleware(['permission:finance-settle']);
     });
 }); // this should be the absolute last line of this file

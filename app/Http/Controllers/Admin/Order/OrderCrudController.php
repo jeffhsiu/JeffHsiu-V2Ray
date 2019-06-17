@@ -323,13 +323,21 @@ class OrderCrudController extends CrudController
                     $this->crud->addClause('where', 'price', '<=', (float) $range->to);
                 }
             });
+        $this->crud->addFilter([
+            'name' => 'settlement_id',
+            'label'=> 'UnSettled',
+            'type' => 'simple',
+        ], false,
+            function() { // if the filter is active
+                $this->crud->addClause('where', 'settlement_id', 0);
+            });
 
         // 經銷商只能看到他自己的
         if (auth()->user()->hasRole('Distributor')) {
             $this->crud->addClause('where', 'distributor_id', auth()->user()->distributor->id);
         }
 
-        $this->crud->orderBy('id', 'desc');
+        $this->crud->orderBy('created_at', 'desc');
 
         $this->crud->allowAccess('show');
         $this->crud->enableExportButtons();

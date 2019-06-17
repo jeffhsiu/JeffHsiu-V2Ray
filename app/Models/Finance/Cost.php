@@ -48,6 +48,10 @@ class Cost extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+    public function settlement()
+    {
+        return $this->belongsTo('App\Models\Finance\Settlement');
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -60,11 +64,6 @@ class Cost extends Model
     | ACCESORS
     |--------------------------------------------------------------------------
     */
-    public function getAmountAttribute($value)
-    {
-        return $value + 0;
-    }
-
     public function getDateNotimeAttribute()
     {
         return explode(' ', $this->date)[0];

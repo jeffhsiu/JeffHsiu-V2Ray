@@ -59,8 +59,8 @@ class CostCrudController extends CrudController
                 'label' => 'Image', // Table column heading
                 'type' => 'image',
                 'disk' => 'public',
-                 'height' => '500px',
-                // 'width' => '30px',
+                'height' => '360px',
+                'width' => '360px',
                 'visibleInTable' => false, // no point, since it's a large text
             ],
             [
@@ -123,11 +123,29 @@ class CostCrudController extends CrudController
             ],
         ]);
 
+        $this->crud->addFilter([
+            'name' => 'settlement_id',
+            'label'=> 'UnSettled',
+            'type' => 'simple',
+        ], false,
+            function() { // if the filter is active
+                $this->crud->addClause('where', 'settlement_id', 0);
+            });
+
         $this->crud->allowAccess('show');
 
         // add asterisk for fields that are required in CostRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');
         $this->crud->setRequiredFields(UpdateRequest::class, 'edit');
+    }
+
+    public function show($id)
+    {
+        $content = parent::show($id);
+
+        $this->crud->removeColumn('settlement_id');
+
+        return $content;
     }
 
     public function store(StoreRequest $request)
