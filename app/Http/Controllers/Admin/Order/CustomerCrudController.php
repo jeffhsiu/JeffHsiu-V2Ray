@@ -128,25 +128,14 @@ class CustomerCrudController extends CrudController
 
         $this->crud->allowAccess('show');
 
-        // add asterisk for fields that are required in CustomerRequest
-        $this->crud->setRequiredFields(StoreRequest::class, 'create');
-        $this->crud->setRequiredFields(UpdateRequest::class, 'edit');
-    }
-
-    /**
-     * Show the form for creating inserting a new row.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        parent::create();
         $this->data['from_server'] = Request::has('server_id') ? true : false;
         $this->data['server_id'] = Request::has('server_id') ? Request::get('server_id') : 1;
         $this->data['docker_name'] = Request::has('docker_name') ? Request::get('docker_name') : 'v2ray-01';
+        $this->crud->setCreateView('admin.order.customer.create');
 
-        // load the view from /resources/views/vendor/backpack/crud/ if it exists, otherwise load the one in the package
-        return view('admin.order.customer.create', $this->data);
+        // add asterisk for fields that are required in CustomerRequest
+        $this->crud->setRequiredFields(StoreRequest::class, 'create');
+        $this->crud->setRequiredFields(UpdateRequest::class, 'edit');
     }
 
     public function store(StoreRequest $request)

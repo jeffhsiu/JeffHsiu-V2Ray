@@ -344,6 +344,8 @@ class OrderCrudController extends CrudController
         $this->crud->allowAccess('show');
         $this->crud->enableExportButtons();
 
+        $this->crud->setCreateView('admin.order.order.create');
+
         // add asterisk for fields that are required in OrderRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');
         $this->crud->setRequiredFields(UpdateRequest::class, 'edit');
@@ -376,6 +378,15 @@ class OrderCrudController extends CrudController
         if ($order->exists()) {
             Alert::error("The V2Ray account has been used.<br/> Please choose another setting or disable the account in use.")->flash();
             return redirect()->back();
+        }
+        // 新增付款訂單同時將試用訂單設為disable
+        if ($request->type == Order::TYPE_PAID) {
+            Order::where('server_id', $request->server_id)
+                ->where('docker_name', $request->docker_name)
+                ->where('status', Order::STATUS_ENABLE)
+                ->where('customer_id', $request->customer_id)
+                ->where('type', Order::TYPE_TRIAL)
+                ->update(['status' => Order::STATUS_DISABLE]);
         }
         // your additional operations before save here
         parent::storeCrud($request);
