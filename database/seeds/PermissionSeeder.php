@@ -69,6 +69,9 @@ class PermissionSeeder extends Seeder
         if ( !Permission::where('name', 'vps-server-list')->exists()) {
             Permission::create(['name' => 'vps-server-list'])->assignRole($distributor);
         }
+        if ( !Permission::where('name', 'vps-server-logs')->exists()) {
+            Permission::create(['name' => 'vps-server-logs'])->assignRole();
+        }
 
         /*
          * Order 權限控制

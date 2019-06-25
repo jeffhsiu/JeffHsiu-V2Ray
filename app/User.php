@@ -40,6 +40,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /*
+     |--------------------------------------------------------------------------
+     | RELATIONS
+     |--------------------------------------------------------------------------
+    */
     public function distributor()
     {
         return $this->hasOne('App\Models\Order\Distributor', 'email', 'email');
@@ -48,5 +53,10 @@ class User extends Authenticatable
     public function settlement()
     {
         return $this->hasMany('App\Models\Finance\Settlement');
+    }
+
+    public function serverLogs()
+    {
+        return $this->hasMany('App\Models\VPS\ServerLog');
     }
 }

@@ -81,6 +81,11 @@ class Order extends Model
         return $this->belongsTo('App\Models\Finance\Settlement');
     }
 
+    public function serverLogs()
+    {
+        return $this->hasMany('App\Models\VPS\ServerLog');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES
@@ -112,6 +117,11 @@ class Order extends Model
     public function getEndDateNotimeAttribute()
     {
         return explode(' ', $this->end_date)[0];
+    }
+
+    public function getCustomerNameAttribute()
+    {
+        return $this->customer->name;
     }
 
     /*

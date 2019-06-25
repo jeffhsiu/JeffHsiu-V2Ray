@@ -5,7 +5,7 @@ namespace App\Models\VPS;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\CrudTrait;
 
-class Server extends Model
+class ServerLog extends Model
 {
     use CrudTrait;
 
@@ -14,7 +14,7 @@ class Server extends Model
     | GLOBAL VARIABLES
     |--------------------------------------------------------------------------
     */
-    protected $table = 'server';
+    protected $table = 'server_log';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -22,10 +22,21 @@ class Server extends Model
     // protected $hidden = [];
     // protected $dates = [];
 
-    // VPS提供商 Google Cloud
-    const PROVIDER_GOOGLE = 1;
-    // VPS提供商 Bandwagon
-    const PROVIDER_BANDWAGON = 2;
+    // System User ID
+    const USER_ID_SYSTEM = 0;
+
+    // Docker 啟動
+    const ACTION_DOCKER_START = 1;
+    // Docker 關閉
+    const ACTION_DOCKER_STOP = 2;
+    // Docker Redo
+    const ACTION_DOCKER_REDO = 3;
+    // Server 啟動
+    const ACTION_SERVER_START = 4;
+    // Server 關閉
+    const ACTION_SERVER_STOP = 5;
+    // Server 重啟
+    const ACTION_SERVER_RESTART = 6;
 
     /*
     |--------------------------------------------------------------------------
@@ -38,19 +49,19 @@ class Server extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function account()
+    public function user()
     {
-        return $this->belongsTo('App\Models\VPS\Account');
+        return $this->belongsTo('App\User');
     }
 
-    public function orders()
+    public function server()
     {
-        return $this->hasMany('App\Models\Order\Order');
+        return $this->belongsTo('App\Models\VPS\Server');
     }
 
-    public function logs()
+    public function order()
     {
-        return $this->hasMany('App\Models\VPS\ServerLog');
+        return $this->belongsTo('App\Models\Order\Order');
     }
 
     /*
@@ -64,34 +75,10 @@ class Server extends Model
     | ACCESORS
     |--------------------------------------------------------------------------
     */
-    public function getSshPwdAttribute($value)
-    {
-        return decrypt($value);
-    }
-
-    public function getProviderStringAttribute()
-    {
-        switch ($this->provider) {
-            case self::PROVIDER_GOOGLE:
-                return 'Google Cloud';
-            case self::PROVIDER_BANDWAGON:
-                return 'Bandwagon';
-            default:
-                return '';
-        }
-    }
 
     /*
     |--------------------------------------------------------------------------
     | MUTATORS
     |--------------------------------------------------------------------------
     */
-    public function setSshPwdAttribute($value)
-    {
-        if (empty($value)) {
-            $this->attributes['ssh_pwd'] = encrypt($this->ssh_pwd);
-        } else {
-            $this->attributes['ssh_pwd'] = encrypt($value);
-        }
-    }
 }

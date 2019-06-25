@@ -28,6 +28,8 @@ Route::group([
         Route::get('server/docker/stop', 'ServerCrudController@dockerStop')->middleware(['permission:vps-servers']);
         Route::get('server/docker/redo', 'ServerCrudController@dockerRedo')->middleware(['permission:vps-servers']);
         Route::get('server/docker/config', 'ServerCrudController@getV2RayConfig')->middleware(['permission:vps-servers']);
+
+        CRUD::resource('serverlog', 'ServerLogCrudController', ['middleware' => 'permission:vps-server-logs']);
     });
 
     Route::group([
