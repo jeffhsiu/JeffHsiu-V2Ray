@@ -339,7 +339,7 @@ class ServerCrudController extends CrudController
         foreach ($data['dockers'] as &$docker) {
             $order = Order::where('server_id', $server->id)
                 ->where('docker_name', $docker['name'])
-                ->where('status', Order::STATUS_ENABLE)
+                ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
                 ->orderBy('end_date', 'desc')
                 ->first();
 
@@ -364,7 +364,7 @@ class ServerCrudController extends CrudController
         if (auth()->user()->hasRole('Distributor')) {
             $order = Order::where('server_id', $request->server_id)
                 ->where('docker_name', $request->docker_name)
-                ->where('status', Order::STATUS_ENABLE)
+                ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
                 ->orderBy('end_date', 'desc')
                 ->first();
             if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
@@ -415,7 +415,7 @@ class ServerCrudController extends CrudController
         if (auth()->user()->hasRole('Distributor')) {
             $order = Order::where('server_id', $request->server_id)
                 ->where('docker_name', $request->docker_name)
-                ->where('status', Order::STATUS_ENABLE)
+                ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
                 ->orderBy('end_date', 'desc')
                 ->first();
             if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
@@ -466,7 +466,7 @@ class ServerCrudController extends CrudController
         if (auth()->user()->hasRole('Distributor')) {
             $order = Order::where('server_id', $request->server_id)
                 ->where('docker_name', $request->docker_name)
-                ->where('status', Order::STATUS_ENABLE)
+                ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
                 ->orderBy('end_date', 'desc')
                 ->first();
             if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
@@ -542,7 +542,7 @@ class ServerCrudController extends CrudController
         if (auth()->user()->hasRole('Distributor')) {
             $order = Order::where('server_id', $request->server_id)
                 ->where('docker_name', $request->docker_name)
-                ->where('status', Order::STATUS_ENABLE)
+                ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
                 ->orderBy('end_date', 'desc')
                 ->first();
             if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
@@ -586,7 +586,7 @@ class ServerCrudController extends CrudController
         $data = array();
         $servers = array();
         $paginate = Server::selectRaw('server.id AS server_id, COUNT(server.id) as count' )
-            ->leftJoin(DB::raw('(SELECT server_id FROM `order` WHERE status = '.Order::STATUS_ENABLE.') AS o '),
+            ->leftJoin(DB::raw('(SELECT server_id FROM `order` WHERE status IN ('.Order::STATUS_ENABLE.','.Order::STATUS_EXPIRED.')) AS o '),
                 'server.id', '=', 'o.server_id')
             ->groupBy('server.id')
             ->orderBy('count')
@@ -599,7 +599,7 @@ class ServerCrudController extends CrudController
                 $docker_name = 'v2ray-'.str_pad($i,2,"0",STR_PAD_LEFT);
                 $order = Order::where('server_id', $server->id)
                     ->where('docker_name', $docker_name)
-                    ->where('status', Order::STATUS_ENABLE)
+                    ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
                     ->orderBy('end_date', 'desc')
                     ->first();
                 $dockers[$i]['name'] = $docker_name;

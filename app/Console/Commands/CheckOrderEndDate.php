@@ -72,6 +72,9 @@ class CheckOrderEndDate extends Command
                 continue;
             }
 
+            // 訂單設為過期狀態
+            $order->update(['status' => Order::STATUS_EXPIRED]);
+
             // 伺服器操作記錄
             ServerLog::create([
                 'user_id' => ServerLog::USER_ID_SYSTEM,

@@ -28,11 +28,14 @@ class Order extends Model
     const STATUS_ENABLE = 1;
     // 不可用狀態
     const STATUS_DISABLE = 2;
+    // 過期狀態
+    const STATUS_EXPIRED = 3;
 
     // 付費
     const TYPE_PAID = 1;
     // 試用
     const TYPE_TRIAL = 2;
+
     /*
     |--------------------------------------------------------------------------
     | FUNCTIONS

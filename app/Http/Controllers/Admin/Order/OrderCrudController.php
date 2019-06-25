@@ -12,6 +12,7 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use App\Http\Requests\Order\OrderRequest as StoreRequest;
 use App\Http\Requests\Order\OrderRequest as UpdateRequest;
 use Backpack\CRUD\CrudPanel;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 use Prologue\Alerts\Facades\Alert;
 
@@ -60,6 +61,7 @@ class OrderCrudController extends CrudController
                 'options' => [
                     Order::STATUS_ENABLE => 'Enable',
                     Order::STATUS_DISABLE => 'Disable',
+                    Order::STATUS_EXPIRED => 'Expired',
                 ],
             ],
             [
@@ -150,6 +152,7 @@ class OrderCrudController extends CrudController
                 'options' => [
                     Order::STATUS_ENABLE => 'Enable',
                     Order::STATUS_DISABLE => 'Disable',
+                    Order::STATUS_EXPIRED => 'Expired',
                 ],
             ],
             [
@@ -265,6 +268,7 @@ class OrderCrudController extends CrudController
         ], [
             Order::STATUS_ENABLE => 'Enable',
             Order::STATUS_DISABLE => 'Disable',
+            Order::STATUS_EXPIRED => 'Expired',
         ],
             function($value) { // if the filter is active
                 $this->crud->addClause('where', 'status', $value);
@@ -373,7 +377,7 @@ class OrderCrudController extends CrudController
     {
         $order = Order::where('server_id', $request->server_id)
             ->where('docker_name', $request->docker_name)
-            ->where('status', Order::STATUS_ENABLE)
+            ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
             ->where('customer_id', '<>', $request->customer_id);
         if ($order->exists()) {
             Alert::error("The V2Ray account has been used.<br/> Please choose another setting or disable the account in use.")->flash();
@@ -383,7 +387,7 @@ class OrderCrudController extends CrudController
         if ($request->type == Order::TYPE_PAID) {
             Order::where('server_id', $request->server_id)
                 ->where('docker_name', $request->docker_name)
-                ->where('status', Order::STATUS_ENABLE)
+                ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
                 ->where('customer_id', $request->customer_id)
                 ->where('type', Order::TYPE_TRIAL)
                 ->update(['status' => Order::STATUS_DISABLE]);
@@ -398,6 +402,11 @@ class OrderCrudController extends CrudController
 
     public function update(UpdateRequest $request)
     {
+        if ($request->status == Order::STATUS_EXPIRED
+            && Carbon::parse($request->end_date)->gt(Carbon::today())) {
+            $request->offsetSet('status', Order::STATUS_ENABLE);
+        }
+
         // your additional operations before save here
         $redirect_location = parent::updateCrud($request);
         // your additional operations after save here
