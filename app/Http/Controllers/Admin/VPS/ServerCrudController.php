@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\VPS;
 
 use App\Models\Order\Order;
 use App\Models\VPS\Server;
+use App\Models\VPS\ServerLog;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
 // VALIDATION: change the requests to match your own file names if you need form validation
@@ -360,13 +361,14 @@ class ServerCrudController extends CrudController
      */
     public function dockerStart(Request $request)
     {
+        $order = Order::where('server_id', $request->server_id)
+            ->where('docker_name', $request->docker_name)
+            ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
+            ->orderBy('end_date', 'desc')
+            ->first();
+
         // 供應商只能操作自己的訂單
         if (auth()->user()->hasRole('Distributor')) {
-            $order = Order::where('server_id', $request->server_id)
-                ->where('docker_name', $request->docker_name)
-                ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
-                ->orderBy('end_date', 'desc')
-                ->first();
             if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
                 return abort(403);
             }
@@ -398,6 +400,17 @@ class ServerCrudController extends CrudController
             return redirect()->back();
         }
 
+        // 伺服器操作記錄
+        ServerLog::create([
+            'user_id' => auth()->id(),
+            'server_id' => $request->server_id,
+            'order_id' => $order ? $order->id : 0,
+            'ip' => $server->ip,
+            'docker_name' => $request->docker_name,
+            'action' => ServerLog::ACTION_DOCKER_START,
+            'reason' => 'Manual'
+        ]);
+
         Alert::success("Docker start success!")->flash();
         return redirect()->back();
     }
@@ -411,13 +424,14 @@ class ServerCrudController extends CrudController
      */
     public function dockerStop(Request $request)
     {
+        $order = Order::where('server_id', $request->server_id)
+            ->where('docker_name', $request->docker_name)
+            ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
+            ->orderBy('end_date', 'desc')
+            ->first();
+
         // 供應商只能操作自己的訂單
         if (auth()->user()->hasRole('Distributor')) {
-            $order = Order::where('server_id', $request->server_id)
-                ->where('docker_name', $request->docker_name)
-                ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
-                ->orderBy('end_date', 'desc')
-                ->first();
             if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
                 return abort(403);
             }
@@ -449,6 +463,17 @@ class ServerCrudController extends CrudController
             return redirect()->back();
         }
 
+        // 伺服器操作記錄
+        ServerLog::create([
+            'user_id' => auth()->id(),
+            'server_id' => $request->server_id,
+            'order_id' => $order ? $order->id : 0,
+            'ip' => $server->ip,
+            'docker_name' => $request->docker_name,
+            'action' => ServerLog::ACTION_DOCKER_STOP,
+            'reason' => 'Manual'
+        ]);
+
         Alert::success("Docker stop success!")->flash();
         return redirect()->back();
     }
@@ -462,13 +487,14 @@ class ServerCrudController extends CrudController
      */
     public function dockerRedo(Request $request)
     {
+        $order = Order::where('server_id', $request->server_id)
+            ->where('docker_name', $request->docker_name)
+            ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
+            ->orderBy('end_date', 'desc')
+            ->first();
+
         // 供應商只能操作自己的訂單
         if (auth()->user()->hasRole('Distributor')) {
-            $order = Order::where('server_id', $request->server_id)
-                ->where('docker_name', $request->docker_name)
-                ->whereIn('status', [Order::STATUS_ENABLE, Order::STATUS_EXPIRED])
-                ->orderBy('end_date', 'desc')
-                ->first();
             if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
                 return abort(403);
             }
@@ -524,6 +550,17 @@ class ServerCrudController extends CrudController
         Order::where('server_id', $server->id)
             ->where('docker_name', $request->docker_name)
             ->update(['status' => Order::STATUS_DISABLE]);
+
+        // 伺服器操作記錄
+        ServerLog::create([
+            'user_id' => auth()->id(),
+            'server_id' => $request->server_id,
+            'order_id' => $order ? $order->id : 0,
+            'ip' => $server->ip,
+            'docker_name' => $request->docker_name,
+            'action' => ServerLog::ACTION_DOCKER_REDO,
+            'reason' => 'Manual'
+        ]);
 
         Alert::success("Docker redo success!")->flash();
         return redirect()->back();
