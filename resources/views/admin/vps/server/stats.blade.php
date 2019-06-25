@@ -107,7 +107,7 @@
                             <tbody>
                             @foreach($dockers as $docker)
                                 <tr>
-                                    <td style="min-width: 60px;">
+                                    <td class="{{ $docker['is_end'] ? 'text-red text-bold' : ''}}" style="min-width: 60px;">
                                         {{ $docker['name'] }}
                                     </td>
                                     <td>
@@ -122,7 +122,7 @@
                                     <td>
                                         {{ $docker['order'] ? strstr($docker['order']->start_date, ' ', true) : '-'  }}
                                     </td>
-                                    <td>
+                                    <td class="{{ $docker['is_end'] ? 'text-red text-bold' : ''}}">
                                         {{ $docker['order'] ? !empty($docker['order']->end_date) ? strstr($docker['order']->end_date, ' ', true) : '~' : '-'  }}
                                     </td>
                                     <td>

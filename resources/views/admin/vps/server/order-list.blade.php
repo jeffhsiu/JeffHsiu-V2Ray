@@ -38,7 +38,7 @@
                         <table class="table table-striped table-hover responsive" style="width: 100%;">
                             <thead>
                                 <tr>
-                                    <th>Docker</th>
+                                    <th style="min-width: 58px;">Docker</th>
                                     <th>Distributor</th>
                                     <th>Customer</th>
                                     <th>Start Date</th>
@@ -50,11 +50,11 @@
                             <tbody>
                             @foreach($server['dockers'] as $docker)
                                 <tr>
-                                    <td>{{ $docker['name'] }}</td>
+                                    <td class="{{ $docker['is_end'] ? 'text-red text-bold' : ''}}">{{ $docker['name'] }}</td>
                                     <td>{!! is_null($docker['order']) ? '-' : '<a href="'.backpack_url('order/distributor/'.$docker['order']->distributor_id).'">'.$docker['order']->distributor->name.'</a>' !!}</td>
                                     <td>{!! is_null($docker['order']) ? '-' : '<a href="'.backpack_url('order/order/'.$docker['order']->id).'">'.$docker['order']->customer->name.'</a>' !!}</td>
                                     <td>{{ is_null($docker['order']) ? '-' : $docker['order']->start_date_notime }}</td>
-                                    <td>{{ is_null($docker['order']) ? '-' : $docker['order']->end_date_notime }}</td>
+                                    <td class="{{ $docker['is_end'] ? 'text-red text-bold' : ''}}">{{ is_null($docker['order']) ? '-' : $docker['order']->end_date_notime }}</td>
                                     <td>{{ is_null($docker['order']) ? '-' : $docker['order']->type_string }}</td>
                                     <td>
                                         @if(is_null($docker['order']))

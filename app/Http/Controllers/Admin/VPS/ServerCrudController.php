@@ -10,6 +10,7 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use App\Http\Requests\VPS\ServerRequest as StoreRequest;
 use App\Http\Requests\VPS\ServerRequest as UpdateRequest;
 use Backpack\CRUD\CrudPanel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -336,11 +337,15 @@ class ServerCrudController extends CrudController
 
         // 對應的訂單記錄
         foreach ($data['dockers'] as &$docker) {
-            $docker['order'] = Order::where('server_id', $server->id)
+            $order = Order::where('server_id', $server->id)
                 ->where('docker_name', $docker['name'])
                 ->where('status', Order::STATUS_ENABLE)
                 ->orderBy('end_date', 'desc')
                 ->first();
+
+            $is_end = $order ? Carbon::today()->gt(Carbon::parse($order->end_date)) : false;
+            $docker['order'] = $order;
+            $docker['is_end'] = $is_end;
         }
 
         return view('admin.vps.server.stats', $data);
@@ -599,6 +604,9 @@ class ServerCrudController extends CrudController
                     ->first();
                 $dockers[$i]['name'] = $docker_name;
                 $dockers[$i]['order'] = $order;
+
+                $is_end = $order ? Carbon::today()->gt(Carbon::parse($order->end_date)) : false;
+                $dockers[$i]['is_end'] = $is_end;
             }
             $server->dockers = $dockers;
             $servers[] = $server;
