@@ -57,12 +57,13 @@ class CheckOrderEndDate extends Command
             $ip = $server->ip;
             $port = $server->ssh_port;
             $docker_name = $order->docker_name;
+            $docker_name_unit = substr($order->docker_name, 0, -2).(substr($order->docker_name, -2)+0);
 
             try {
                 $connection = ssh2_connect($ip, $port);
                 ssh2_auth_password($connection, $username, $password);
 
-                ssh2_exec($connection, 'docker stop '.$docker_name);
+                ssh2_exec($connection, 'docker stop '.$docker_name.' '.$docker_name_unit);
 
                 ssh2_exec($connection, 'exit');
                 unset($connection);
