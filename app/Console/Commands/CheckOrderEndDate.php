@@ -92,31 +92,20 @@ class CheckOrderEndDate extends Command
                 ]);
 
                 // Wechat消息推送
-                foreach (config('wechatpush.send_key') as $send_key) {
-                    $text = $order->customer->name.'_使用日到期，Docker已暫停';
-                    $desp = sprintf('Customer: %s'.PHP_EOL.PHP_EOL.
-                        'IP: %s'.PHP_EOL.PHP_EOL.
-                        'Docker name: %s'.PHP_EOL.PHP_EOL.
-                        'Action: %s'.PHP_EOL.PHP_EOL.
-                        'Reason: %s',
-                        $order->customer->name,
-                        $order->server->ip,
-                        $order->docker_name,
-                        'Docker 停止',
-                        '訂單使用日到期'
-                    );
-                    try {
-                        $url = sprintf(
-                            'https://sc.ftqq.com/%s.send?text=%s&desp=%s',
-                            urlencode($send_key),
-                            urlencode($text),
-                            urlencode($desp)
-                        );
-                        file_get_contents($url);
-                    } catch (\Exception $e) {
-                        Log::error('Wechat push error:'.$e->getMessage());
-                    }
-                }
+                $text = $order->customer->name.'_使用日到期，Docker已暫停';
+                $desp = sprintf(
+                    'Customer: %s'.PHP_EOL.PHP_EOL.
+                    'IP: %s'.PHP_EOL.PHP_EOL.
+                    'Docker name: %s'.PHP_EOL.PHP_EOL.
+                    'Action: %s'.PHP_EOL.PHP_EOL.
+                    'Reason: %s',
+                    $order->customer->name,
+                    $order->server->ip,
+                    $order->docker_name,
+                    'Docker 停止',
+                    '訂單使用日到期'
+                );
+                wechatPush($text, $desp);
             }
 
             // 訂單設為過期狀態
