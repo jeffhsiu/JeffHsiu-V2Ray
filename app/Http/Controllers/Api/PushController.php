@@ -40,9 +40,9 @@ class PushController extends Controller
             'Net: %s'.PHP_EOL.PHP_EOL.
             'Action: %s',
             $customer,
-            $request->ip,
+            $request->ip ?: '-',
             $docker_name,
-            $request->net,
+            $request->net ?: '-',
             'Docker 停止'
         );
         wechatPush($text, $desp);
