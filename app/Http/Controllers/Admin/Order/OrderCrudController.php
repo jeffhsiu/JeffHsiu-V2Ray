@@ -314,6 +314,25 @@ class OrderCrudController extends CrudController
                 $this->crud->addClause('whereIn', 'server_id', array_column($server, 'id'));
             });
         $this->crud->addFilter([
+            'name' => 'docker_name',
+            'label'=> 'Docker',
+            'type' => 'dropdown',
+        ], [
+            'v2ray-01' => 'v2ray-01',
+            'v2ray-02' => 'v2ray-02',
+            'v2ray-03' => 'v2ray-03',
+            'v2ray-04' => 'v2ray-04',
+            'v2ray-05' => 'v2ray-05',
+            'v2ray-06' => 'v2ray-06',
+            'v2ray-07' => 'v2ray-07',
+            'v2ray-08' => 'v2ray-08',
+            'v2ray-09' => 'v2ray-09',
+            'v2ray-10' => 'v2ray-10',
+        ],
+            function($value) { // if the filter is active
+                $this->crud->addClause('where', 'docker_name', $value);
+            });
+        $this->crud->addFilter([
             'name' => 'price',
             'label'=> 'Price',
             'type' => 'range',
