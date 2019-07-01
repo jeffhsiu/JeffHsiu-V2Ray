@@ -31,12 +31,14 @@ class ServerLog extends Model
     const ACTION_DOCKER_STOP = 2;
     // Docker Redo
     const ACTION_DOCKER_REDO = 3;
+    // Docerk 重啟
+    const ACTION_DOCKER_RESTART = 4;
     // Server 啟動
-    const ACTION_SERVER_START = 4;
+    const ACTION_SERVER_START = 5;
     // Server 關閉
-    const ACTION_SERVER_STOP = 5;
+    const ACTION_SERVER_STOP = 6;
     // Server 重啟
-    const ACTION_SERVER_RESTART = 6;
+    const ACTION_SERVER_RESTART = 7;
 
     /*
     |--------------------------------------------------------------------------

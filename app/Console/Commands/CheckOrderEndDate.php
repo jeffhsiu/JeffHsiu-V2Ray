@@ -53,32 +53,35 @@ class CheckOrderEndDate extends Command
                 continue;
             }
 
-            if ( !Order::where('server_id', $order->server_id)
+            $param['username'] = 'root';
+            $param['password'] = $server->ssh_pwd;
+            $param['ip'] = $server->ip;
+            $param['port'] = $server->ssh_port;
+            $param['docker_name'] = $order->docker_name;
+            $param['docker_name_unit'] = substr($order->docker_name, 0, -2).(substr($order->docker_name, -2)+0);
+
+            if (Order::where('server_id', $order->server_id)
                 ->where('docker_name', $order->docker_name)
                 ->where('status', Order::STATUS_ENABLE)
-                ->where('end_date', '>', Carbon::today())
+                ->where('end_date', '>=', Carbon::today())
                 ->exists()) {
+                // 如果還有在使用的訂單，docker重啟，重新計算流量
+                $this->sshDockerAction($param, 'restart');
 
-                $username = 'root';
-                $password = $server->ssh_pwd;
-                $ip = $server->ip;
-                $port = $server->ssh_port;
-                $docker_name = $order->docker_name;
-                $docker_name_unit = substr($order->docker_name, 0, -2).(substr($order->docker_name, -2)+0);
+                // 伺服器操作記錄
+                ServerLog::create([
+                    'user_id' => ServerLog::USER_ID_SYSTEM,
+                    'server_id' => $server->id,
+                    'order_id' => $order->id,
+                    'ip' => $server->ip,
+                    'docker_name' => $order->docker_name,
+                    'action' => ServerLog::ACTION_DOCKER_RESTART,
+                    'reason' => 'Order end date expired. Recalculate net.'
+                ]);
 
-                try {
-                    $connection = ssh2_connect($ip, $port);
-                    ssh2_auth_password($connection, $username, $password);
-
-                    ssh2_exec($connection, 'docker stop '.$docker_name.' '.$docker_name_unit);
-
-                    ssh2_exec($connection, 'exit');
-                    unset($connection);
-
-                } catch (\Exception $exception) {
-                    Log::error('Docker stop failed. error: '.$exception->getMessage());
-                    continue;
-                }
+            } else {
+                // 已經沒有在使用的訂單，docker停止
+                $this->sshDockerAction($param, 'stop');
 
                 // 伺服器操作記錄
                 ServerLog::create([
@@ -110,6 +113,21 @@ class CheckOrderEndDate extends Command
 
             // 訂單設為過期狀態
             $order->update(['status' => Order::STATUS_EXPIRED]);
+        }
+    }
+
+    private function sshDockerAction($param, $action) {
+        try {
+            $connection = ssh2_connect($param['ip'], $param['port']);
+            ssh2_auth_password($connection, $param['username'], $param['password']);
+
+            ssh2_exec($connection, 'docker '.$action.' '.$param['docker_name'].' '.$param['docker_name_unit']);
+
+            ssh2_exec($connection, 'exit');
+            unset($connection);
+
+        } catch (\Exception $exception) {
+            Log::error('Docker '.$action.' failed. error: '.$exception->getMessage());
         }
     }
 }

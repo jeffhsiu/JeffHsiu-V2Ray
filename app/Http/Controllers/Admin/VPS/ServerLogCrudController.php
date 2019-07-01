@@ -70,6 +70,7 @@ class ServerLogCrudController extends CrudController
                     ServerLog::ACTION_DOCKER_START => 'Docker Start',
                     ServerLog::ACTION_DOCKER_STOP => 'Docker Stop',
                     ServerLog::ACTION_DOCKER_REDO => 'Docker Redo',
+                    ServerLog::ACTION_DOCKER_RESTART => 'Docker Restart',
                     ServerLog::ACTION_SERVER_START => 'Server Start',
                     ServerLog::ACTION_SERVER_STOP => 'Server Stop',
                     ServerLog::ACTION_SERVER_RESTART => 'Server Restart',
