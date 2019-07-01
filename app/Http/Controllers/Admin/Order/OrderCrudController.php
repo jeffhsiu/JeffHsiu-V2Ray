@@ -174,7 +174,7 @@ class OrderCrudController extends CrudController
                     'format' => 'YYYY-MM-DD',
                 ],
                 'allows_null' => true,
-                'default' => date('Y-m-d'),
+                'default' => Request::has('start_date') ? Request::get('start_date') : date('Y-m-d'),
             ],
             [   // DateTime
                 'name' => 'end_date',
@@ -185,7 +185,7 @@ class OrderCrudController extends CrudController
                     'format' => 'YYYY-MM-DD',
                 ],
                 'allows_null' => true,
-                // 'default' => '2017-05-12 11:59:59',
+                'default' => Request::has('end_date') ? Request::get('end_date') : ''
             ],
             [
                 // 1-n relationship
@@ -387,6 +387,8 @@ class OrderCrudController extends CrudController
         $this->crud->addButtonFromView('line', 'qrcode', 'qrcode', 'end');
         if ($this->crud->getEntry($id)->type == Order::TYPE_TRIAL) {
             $this->crud->addButtonFromView('line', 'paid', 'paid', 'end');
+        } elseif ($this->crud->getEntry($id)->type == Order::TYPE_PAID) {
+            $this->crud->addButtonFromView('line', 'renew', 'renew', 'end');
         }
 
         return $content;
