@@ -41,6 +41,7 @@ class AccountCrudController extends CrudController
                 'options' => [
                     Server::PROVIDER_GOOGLE => 'Google Cloud',
                     Server::PROVIDER_BANDWAGON => 'Bandwagon',
+                    Server::PROVIDER_HOSTWINDS => 'HostWinds',
                 ],
             ],
             [
@@ -64,6 +65,7 @@ class AccountCrudController extends CrudController
                 'options' => [
                     Server::PROVIDER_GOOGLE => 'Google Cloud',
                     Server::PROVIDER_BANDWAGON => 'Bandwagon',
+                    Server::PROVIDER_HOSTWINDS => 'HostWinds',
                 ],
             ],
             [

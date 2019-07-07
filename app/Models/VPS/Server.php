@@ -26,6 +26,8 @@ class Server extends Model
     const PROVIDER_GOOGLE = 1;
     // VPS提供商 Bandwagon
     const PROVIDER_BANDWAGON = 2;
+    // VPS提供商 HostWinds
+    const PROVIDER_HOSTWINDS = 3;
 
     /*
     |--------------------------------------------------------------------------
@@ -76,6 +78,8 @@ class Server extends Model
                 return 'Google Cloud';
             case self::PROVIDER_BANDWAGON:
                 return 'Bandwagon';
+            case self::PROVIDER_HOSTWINDS:
+                return 'HostWinds';
             default:
                 return '';
         }
