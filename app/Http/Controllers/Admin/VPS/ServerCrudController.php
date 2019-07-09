@@ -181,6 +181,8 @@ class ServerCrudController extends CrudController
             $this->crud->denyAccess('delete');
         }
 
+        $this->crud->orderBy('id', 'desc');
+
         // add asterisk for fields that are required in ServerRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');
         $this->crud->setRequiredFields(UpdateRequest::class, 'edit');

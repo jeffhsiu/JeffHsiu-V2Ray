@@ -362,7 +362,7 @@ class OrderCrudController extends CrudController
             $this->crud->addClause('where', 'distributor_id', auth()->user()->distributor->id);
         }
 
-        $this->crud->orderBy('created_at', 'desc');
+        $this->crud->orderBy('id', 'desc');
 
         $this->crud->allowAccess('show');
         $this->crud->enableExportButtons();
