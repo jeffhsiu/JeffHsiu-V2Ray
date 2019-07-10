@@ -72,6 +72,14 @@
                                         {{ $end_date }}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Remark</strong>
+                                    </td>
+                                    <td>
+                                        {{ $remark }}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div><!-- /.box-body -->
@@ -95,7 +103,6 @@
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Port</th>
                                 <th>Status</th>
                                 <th>Net I/O</th>
                                 <th>Start Date</th>
@@ -109,9 +116,6 @@
                                 <tr>
                                     <td class="{{ $docker['is_end'] ? 'text-red text-bold' : ''}}" style="min-width: 60px;">
                                         {{ $docker['name'] }}
-                                    </td>
-                                    <td>
-                                        {{ $docker['port'] }}
                                     </td>
                                     <td>
                                         {{ explode(' ', $docker['status'])[0] }}
@@ -128,7 +132,7 @@
                                     <td>
                                         {!! $docker['order'] ? '<a href="'.backpack_url('order/order/'.$docker['order']->id).'">'.$docker['order']->customer->name : '-'  !!}
                                     </td>
-                                    <td style="min-width: 185px">
+                                    <td>
                                         @if(auth()->user()->hasRole('Distributor')
                                         && ( !$docker['order'] OR $docker['order']->distributor_id != auth()->user()->distributor->id))
                                             -
@@ -157,6 +161,11 @@
                                             <a href="{{ backpack_url('vps/server/docker/config'.'?server_id='.$server_id.'&docker_name='.$docker['name'].'&type=qrcode') }}" class="btn btn-xs btn-default">
                                                 <i class="fa fa-qrcode"></i> QR
                                             </a>
+                                            @if(is_null($docker['order']))
+                                                <a href="{{ backpack_url('order/customer/create'.'?server_id='.$server_id.'&docker_name='.$docker['name']) }}" class="btn btn-xs btn-default">
+                                                    <i class="fa fa-first-order"></i> Create
+                                                </a>
+                                            @endif
                                         @endif
                                     </td>
                                 </tr>

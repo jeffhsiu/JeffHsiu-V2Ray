@@ -28,6 +28,7 @@
                     <div class="box-header with-border">
                         <h4 class="box-title">
                             {{ $server['provider_string'] }} - <a href="{{ backpack_url('vps/server/stats/'.$server['id']) }}">{{ $server['ip'] }}</a>
+                            <small>{{ empty($server['remark']) ? '' : ' - '.$server['remark']}}</small>
                         </h4>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>

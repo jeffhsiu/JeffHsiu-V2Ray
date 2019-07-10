@@ -73,6 +73,11 @@ class ServerCrudController extends CrudController
                 'type' => "datetime-null",
                 'format' => 'YYYY-MM-DD', // use something else than the base.default_datetime_format config value
             ],
+            [
+                'name' => 'remark', // The db column name
+                'label' => 'Remark', // Table column heading
+                'type' => 'text',
+            ],
         ]);
 
         $this->crud->addFields([
@@ -124,6 +129,11 @@ class ServerCrudController extends CrudController
                 ],
                 'allows_null' => true,
                 // 'default' => '2017-05-12 11:59:59',
+            ],
+            [
+                'name' => 'remark', // The db column name
+                'label' => 'Remark', // Table column heading
+                'type' => 'text',
             ],
         ]);
 
@@ -248,6 +258,7 @@ class ServerCrudController extends CrudController
         }
         $data['server_id'] = $server->id;
         $data['end_date'] = strstr($server->end_date, ' ', true);
+        $data['remark'] = $server->remark;
 
         try {
             $connection = ssh2_connect($ip, $port);
