@@ -49,6 +49,7 @@ class ServerCrudController extends CrudController
                     Server::PROVIDER_GOOGLE => 'Google Cloud',
                     Server::PROVIDER_BANDWAGON => 'Bandwagon',
                     Server::PROVIDER_HOSTWINDS => 'HostWinds',
+                    Server::PROVIDER_LINODE => 'Linode',
                 ],
             ],
             [
@@ -83,6 +84,7 @@ class ServerCrudController extends CrudController
                     Server::PROVIDER_GOOGLE => 'Google Cloud',
                     Server::PROVIDER_BANDWAGON => 'Bandwagon',
                     Server::PROVIDER_HOSTWINDS => 'HostWinds',
+                    Server::PROVIDER_LINODE => 'Linode',
                 ],
             ],
             [
@@ -136,6 +138,7 @@ class ServerCrudController extends CrudController
             Server::PROVIDER_GOOGLE => 'Google Cloud',
             Server::PROVIDER_BANDWAGON => 'Bandwagon',
             Server::PROVIDER_HOSTWINDS => 'HostWinds',
+            Server::PROVIDER_LINODE => 'Linode',
         ], function($value) { // if the filter is active
             $this->crud->addClause('where', 'provider', $value);
         });
@@ -235,6 +238,9 @@ class ServerCrudController extends CrudController
                 break;
             case Server::PROVIDER_HOSTWINDS:
                 $data['provider'] = 'HostWinds';
+                break;
+            case Server::PROVIDER_LINODE:
+                $data['provider'] = 'Linode';
                 break;
             default:
                 $data['provider'] = 'UnKnonw';

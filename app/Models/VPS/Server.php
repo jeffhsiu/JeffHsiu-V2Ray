@@ -28,6 +28,8 @@ class Server extends Model
     const PROVIDER_BANDWAGON = 2;
     // VPS提供商 HostWinds
     const PROVIDER_HOSTWINDS = 3;
+    // VPS提供商 Linode
+    const PROVIDER_LINODE = 4;
 
     /*
     |--------------------------------------------------------------------------
@@ -80,6 +82,8 @@ class Server extends Model
                 return 'Bandwagon';
             case self::PROVIDER_HOSTWINDS:
                 return 'HostWinds';
+            case self::PROVIDER_LINODE:
+                return 'Linode';
             default:
                 return '';
         }
