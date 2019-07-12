@@ -537,7 +537,7 @@ class ServerCrudController extends CrudController
         $ssh_user = 'root';
         $ssh_pwd = $server->ssh_pwd;
         $index = substr($request->docker_name, -2);
-        $port = 5550 + $index;
+        $port = 15550 + $index;
         $path = storage_path("v2ray/account/$ip");
         $command = "bash $shell $ip $index $path";
 
