@@ -150,7 +150,7 @@ do
     rm -f /usr/local/etc/v2ray/vmess_qr.json /usr/local/etc/v2ray/config.json
     index=`echo ${i}|awk '{printf("%02d\n",$0)}'`
     v2ray_id=$(uuidgen | tr "[:upper:]" "[:lower:]")
-    port=`expr 5550 + ${index}`
+    port=`expr 15550 + ${index}`
     create_v2ray_config
     create_vmess_URL_config
     base64_vmess
