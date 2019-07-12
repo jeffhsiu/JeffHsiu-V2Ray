@@ -312,7 +312,7 @@ class ServerCrudController extends CrudController
                         'container_id' => $ps[0],
                         'created' => $created,
                         'status' => $status,
-                        'port' => substr($ps[$i], 8, 4),
+                        'port' => substr($ps[$i],strpos($ps[$i],':')+1,strpos($ps[$i],'-')-strpos($ps[$i],':')-1),
                         'name' => $name,
                     );
                 } else {  //Docker停用狀態
