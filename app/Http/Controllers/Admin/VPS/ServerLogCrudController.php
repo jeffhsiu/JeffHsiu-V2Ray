@@ -89,6 +89,7 @@ class ServerLogCrudController extends CrudController
             ],
         ]);
 
+        $this->crud->orderBy('id', 'desc');
 
         $this->crud->removeAllButtons();
 
