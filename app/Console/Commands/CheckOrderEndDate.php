@@ -42,17 +42,22 @@ class CheckOrderEndDate extends Command
      */
     public function handle()
     {
+        // 取得過期的訂單
         $orders = Order::where('status', Order::STATUS_ENABLE)
             ->where('end_date', '<', Carbon::today())
             ->get();
 
         foreach ($orders as $order) {
+
+            echo '訂單使用日到期，用戶:'.$order->customer->name.'，IP:'.$order->server->ip.'，Docker:'.$order->docker_name.PHP_EOL;
+
             $server = Server::find($order->server_id);
             if ( !$server) {
                 Log::error('Server dose not exists. order_id:' . $order->id . ', server_id:'.$order->server_id);
                 continue;
             }
 
+            $param = array();
             $param['username'] = 'root';
             $param['password'] = $server->ssh_pwd;
             $param['ip'] = $server->ip;
@@ -79,6 +84,8 @@ class CheckOrderEndDate extends Command
                     'reason' => 'Order end date expired. Recalculate net.'
                 ]);
 
+                echo 'Docker 已重啟'.PHP_EOL;
+
             } else {
                 // 已經沒有在使用的訂單，docker停止
                 $this->sshDockerAction($param, 'stop');
@@ -95,7 +102,7 @@ class CheckOrderEndDate extends Command
                 ]);
 
                 // Wechat消息推送
-                $text = $order->customer->name.'_使用日到期，Docker已暫停';
+                $text = $order->customer->name.'_訂單到期，Docker已停止';
                 $desp = sprintf(
                     'Customer: %s'.PHP_EOL.PHP_EOL.
                     'IP: %s'.PHP_EOL.PHP_EOL.
@@ -109,10 +116,68 @@ class CheckOrderEndDate extends Command
                     '訂單使用日到期'
                 );
                 wechatPush($text, $desp);
+
+                echo 'Docker 已停止'.PHP_EOL;
             }
 
             // 訂單設為過期狀態
             $order->update(['status' => Order::STATUS_EXPIRED]);
+        }
+
+        // 一個月以上的訂單，每30天 docker 重啟重新計算流量
+        $orders = Order::where('status', Order::STATUS_ENABLE)
+            ->where('start_date', '<', Carbon::today())
+            ->whereRaw('MOD(DATEDIFF(NOW(), start_date), 30) = 0')
+            ->get();
+
+        foreach ($orders as $order) {
+
+            echo '訂單流量重置，用戶:'.$order->customer->name.'，IP:'.$order->server->ip.'，Docker:'.$order->docker_name.PHP_EOL;
+
+            $server = Server::find($order->server_id);
+            if ( !$server) {
+                Log::error('Server dose not exists. order_id:' . $order->id . ', server_id:'.$order->server_id);
+                continue;
+            }
+
+            $param = array();
+            $param['username'] = 'root';
+            $param['password'] = $server->ssh_pwd;
+            $param['ip'] = $server->ip;
+            $param['port'] = $server->ssh_port;
+            $param['docker_name'] = $order->docker_name;
+            $param['docker_name_unit'] = substr($order->docker_name, 0, -2).(substr($order->docker_name, -2)+0);
+
+            $this->sshDockerAction($param, 'restart');
+
+            // 伺服器操作記錄
+            ServerLog::create([
+                'user_id' => ServerLog::USER_ID_SYSTEM,
+                'server_id' => $server->id,
+                'order_id' => $order->id,
+                'ip' => $server->ip,
+                'docker_name' => $order->docker_name,
+                'action' => ServerLog::ACTION_DOCKER_RESTART,
+                'reason' => 'Order monthly due. Recalculate net.'
+            ]);
+
+            // Wechat消息推送
+            $text = $order->customer->name.'_每月流量重置';
+            $desp = sprintf(
+                'Customer: %s'.PHP_EOL.PHP_EOL.
+                'IP: %s'.PHP_EOL.PHP_EOL.
+                'Docker name: %s'.PHP_EOL.PHP_EOL.
+                'Action: %s'.PHP_EOL.PHP_EOL.
+                'Reason: %s',
+                $order->customer->name,
+                $order->server->ip,
+                $order->docker_name,
+                'Docker 重啟',
+                '訂單每月使用日到期，流量重新計算'
+            );
+            wechatPush($text, $desp);
+
+            echo 'Docker 已重啟'.PHP_EOL;
         }
     }
 
