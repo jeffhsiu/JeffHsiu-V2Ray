@@ -2,17 +2,11 @@
 
 # 參數處理
 ip="$1"
-index="$2"
-path="$3"
+port="$2"
+index="$3"
+path="$4"
 alter_id=100
-if [[ ${index:0:1} == "R" ]]
-then
-    index_start=${index:1:1}
-    index_end=${index:3}
-else
-    index_start=${index}
-    index_end=${index}
-fi
+v2ray_id=$(uuidgen | tr "[:upper:]" "[:lower:]")
 
 create_v2ray_config()
 {
@@ -145,15 +139,9 @@ export_qrcode()
 	wget -O ${path}/qrcode-${index}.png ${link}
 }
 
-for i in `seq ${index_start} ${index_end}`
-do
-    rm -f /usr/local/etc/v2ray/vmess_qr.json /usr/local/etc/v2ray/config.json
-    index=`echo ${i}|awk '{printf("%02d\n",$0)}'`
-    v2ray_id=$(uuidgen | tr "[:upper:]" "[:lower:]")
-    port=`expr 15550 + ${index}`
-    create_v2ray_config
-    create_vmess_URL_config
-    base64_vmess
-    export_config
-    export_qrcode
-done
+rm -f /usr/local/etc/v2ray/vmess_qr.json /usr/local/etc/v2ray/config.json
+create_v2ray_config
+create_vmess_URL_config
+base64_vmess
+export_config
+export_qrcode
