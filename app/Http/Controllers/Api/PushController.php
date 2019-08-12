@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Order\Order;
 use App\Models\VPS\Server;
+use App\Models\VPS\ServerLog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -29,6 +30,17 @@ class PushController extends Controller
         } else {
             $order = null;
         }
+
+        // 伺服器操作記錄
+        ServerLog::create([
+            'user_id' => ServerLog::USER_ID_SYSTEM,
+            'server_id' => $server ? $server->id : 0,
+            'order_id' => $order ? $order->id : 0,
+            'ip' => $request->ip ?: '-',
+            'docker_name' => $docker_name,
+            'action' => ServerLog::ACTION_DOCKER_STOP,
+            'reason' => 'Network traffic exceeds limit.'
+        ]);
 
         // Wechat消息推送
         $customer = $order ? $order->customer->name : '未知用戶';
