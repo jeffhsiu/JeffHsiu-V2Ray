@@ -477,6 +477,10 @@ class ServerCrudController extends CrudController
             $connection = ssh2_connect($ip, $port);
             ssh2_auth_password($connection, $username, $password);
 
+            $stream = ssh2_exec($connection, 'docker stats --no-stream --format "{{.NetIO}}" '.$container_id);
+            stream_set_blocking($stream, true);
+            $docker_stats_output = stream_get_contents($stream);
+            $net = explode(' ', $docker_stats_output)[0];
             ssh2_exec($connection, 'docker stop '.$container_id);
 
             ssh2_exec($connection, 'exit');
@@ -496,7 +500,8 @@ class ServerCrudController extends CrudController
             'ip' => $server->ip,
             'docker_name' => $request->docker_name,
             'action' => ServerLog::ACTION_DOCKER_STOP,
-            'reason' => 'Manual'
+            'reason' => 'Manual',
+            'net' => $net
         ]);
 
         Alert::success("Docker stop success!")->flash();

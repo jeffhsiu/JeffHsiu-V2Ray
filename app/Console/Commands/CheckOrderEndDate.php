@@ -71,7 +71,7 @@ class CheckOrderEndDate extends Command
                 ->where('end_date', '>=', Carbon::today())
                 ->exists()) {
                 // 如果還有在使用的訂單，docker重啟，重新計算流量
-                $this->sshDockerAction($param, 'restart');
+                $net = $this->sshDockerAction($param, 'restart');
 
                 // 伺服器操作記錄
                 ServerLog::create([
@@ -81,14 +81,15 @@ class CheckOrderEndDate extends Command
                     'ip' => $server->ip,
                     'docker_name' => $order->docker_name,
                     'action' => ServerLog::ACTION_DOCKER_RESTART,
-                    'reason' => 'Order end date expired. Recalculate net.'
+                    'reason' => 'Order end date expired. Recalculate net.',
+                    'net' => $net
                 ]);
 
                 echo 'Docker 已重啟'.PHP_EOL;
 
             } else {
                 // 已經沒有在使用的訂單，docker停止
-                $this->sshDockerAction($param, 'stop');
+                $net = $this->sshDockerAction($param, 'stop');
 
                 // 伺服器操作記錄
                 ServerLog::create([
@@ -98,7 +99,8 @@ class CheckOrderEndDate extends Command
                     'ip' => $server->ip,
                     'docker_name' => $order->docker_name,
                     'action' => ServerLog::ACTION_DOCKER_STOP,
-                    'reason' => 'Order end date expired.'
+                    'reason' => 'Order end date expired.',
+                    'net' => $net
                 ]);
 
                 // Wechat消息推送
@@ -148,7 +150,7 @@ class CheckOrderEndDate extends Command
             $param['docker_name'] = $order->docker_name;
             $param['docker_name_unit'] = substr($order->docker_name, 0, -2).(substr($order->docker_name, -2)+0);
 
-            $this->sshDockerAction($param, 'restart');
+            $net = $this->sshDockerAction($param, 'restart');
 
             // 伺服器操作記錄
             ServerLog::create([
@@ -158,7 +160,8 @@ class CheckOrderEndDate extends Command
                 'ip' => $server->ip,
                 'docker_name' => $order->docker_name,
                 'action' => ServerLog::ACTION_DOCKER_RESTART,
-                'reason' => 'Order monthly due. Recalculate net.'
+                'reason' => 'Order monthly due. Recalculate net.',
+                'net' => $net
             ]);
 
             // Wechat消息推送
@@ -186,6 +189,18 @@ class CheckOrderEndDate extends Command
             $connection = ssh2_connect($param['ip'], $param['port']);
             ssh2_auth_password($connection, $param['username'], $param['password']);
 
+            // 取得操作前Docker流量
+            $stream = ssh2_exec($connection, 'docker stats --no-stream --format "{{.NetIO}}" '.$param['docker_name']);
+            stream_set_blocking($stream, true);
+            $docker_stats_output = stream_get_contents($stream);
+            $net = explode(' ', $docker_stats_output)[0];
+            if ($net == 'Error') {
+                $stream = ssh2_exec($connection, 'docker stats --no-stream --format "{{.NetIO}}" '.$param['docker_name_unit']);
+                stream_set_blocking($stream, true);
+                $docker_stats_output = stream_get_contents($stream);
+                $net = explode(' ', $docker_stats_output)[0];
+            }
+
             ssh2_exec($connection, 'docker '.$action.' '.$param['docker_name'].' '.$param['docker_name_unit']);
 
             ssh2_exec($connection, 'exit');
@@ -194,5 +209,7 @@ class CheckOrderEndDate extends Command
         } catch (\Exception $exception) {
             Log::error('Docker '.$action.' failed. error: '.$exception->getMessage());
         }
+
+        return $net;
     }
 }

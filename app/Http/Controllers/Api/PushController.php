@@ -39,7 +39,8 @@ class PushController extends Controller
             'ip' => $request->ip ?: '-',
             'docker_name' => $docker_name,
             'action' => ServerLog::ACTION_DOCKER_STOP,
-            'reason' => 'Network traffic exceeds limit.'
+            'reason' => 'Network traffic exceeds limit.',
+            'net' => $request->net ?: '',
         ]);
 
         // Wechat消息推送

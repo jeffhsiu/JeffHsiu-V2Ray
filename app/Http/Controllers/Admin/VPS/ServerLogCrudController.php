@@ -26,7 +26,7 @@ class ServerLogCrudController extends CrudController
         */
         $this->crud->setModel('App\Models\VPS\ServerLog');
         $this->crud->setRoute(config('backpack.base.route_prefix') . '/vps/serverlog');
-        $this->crud->setEntityNameStrings('serverlog', 'server_logs');
+        $this->crud->setEntityNameStrings('Server Log', 'Server Logs');
 
         /*
         |--------------------------------------------------------------------------
@@ -79,6 +79,11 @@ class ServerLogCrudController extends CrudController
             [
                 'name' => 'reason',
                 'label' => 'Reason',
+                'type' => 'text',
+            ],
+            [
+                'name' => 'net',
+                'label' => 'Net',
                 'type' => 'text',
             ],
             [
