@@ -372,6 +372,14 @@ class ServerCrudController extends CrudController
             $is_end = $order ? Carbon::today()->gt(Carbon::parse($order->end_date)) : false;
             $docker['order'] = $order;
             $docker['is_end'] = $is_end;
+
+            $server_log = ServerLog::where('server_id', $server->id)
+                ->where('docker_name', $docker['name'])
+                ->whereIn('action', [ServerLog::ACTION_DOCKER_STOP, ServerLog::ACTION_DOCKER_REDO, ServerLog::ACTION_DOCKER_RESTART])
+                ->where('order_id', $order ? $order->id : 0)
+                ->orderBy('id', 'desc')
+                ->first();
+            $docker['net_last'] = $server_log ? $server_log->net : null;
         }
 
         return view('admin.vps.server.stats', $data);
@@ -547,6 +555,7 @@ class ServerCrudController extends CrudController
             $begin_port = 5550;
         }
         $port = $begin_port + $index;
+        $container_id = $request->container_id;
         $path = storage_path("v2ray/account/$ip");
         $command = "bash $shell $ip $port $index $path";
 
@@ -555,6 +564,11 @@ class ServerCrudController extends CrudController
 
             $connection = ssh2_connect($ip, $ssh_port);
             ssh2_auth_password($connection, $ssh_user, $ssh_pwd);
+
+            $stream = ssh2_exec($connection, 'docker stats --no-stream --format "{{.NetIO}}" '.$container_id);
+            stream_set_blocking($stream, true);
+            $docker_stats_output = stream_get_contents($stream);
+            $net = explode(' ', $docker_stats_output)[0];
 
             // scp v2ray config
             ssh2_scp_send($connection,
@@ -593,7 +607,8 @@ class ServerCrudController extends CrudController
             'ip' => $server->ip,
             'docker_name' => $request->docker_name,
             'action' => ServerLog::ACTION_DOCKER_REDO,
-            'reason' => 'Manual'
+            'reason' => 'Manual',
+            'net' => $net
         ]);
 
         Alert::success("Docker redo success!")->flash();

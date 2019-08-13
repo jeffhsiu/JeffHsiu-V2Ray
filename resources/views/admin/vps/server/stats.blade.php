@@ -121,7 +121,7 @@
                                         {{ explode(' ', $docker['status'])[0] }}
                                     </td>
                                     <td>
-                                        {{ isset($docker['net']) ? $docker['net'] : '-' }}
+                                        {{ isset($docker['net']) ? $docker['net'] : '-' }}  {{ $docker['net_last'] ? '('.$docker['net_last'].')' : '' }}
                                     </td>
                                     <td>
                                         {{ $docker['order'] ? strstr($docker['order']->start_date, ' ', true) : '-'  }}
