@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Order;
 
 use App\Models\Order\Distributor;
+use App\Models\Order\Order;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
 // VALIDATION: change the requests to match your own file names if you need form validation
@@ -136,6 +137,20 @@ class CustomerCrudController extends CrudController
         // add asterisk for fields that are required in CustomerRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');
         $this->crud->setRequiredFields(UpdateRequest::class, 'edit');
+    }
+
+    public function show($id)
+    {
+        $this->crud->setShowView('admin.order.customer.show');
+
+        $orders = Order::where('customer_id', $id)
+            ->where('status', '<>', Order::STATUS_DISABLE)
+            ->get();
+        $this->data['orders'] = $orders;
+
+        $content = parent::show($id);
+
+        return $content;
     }
 
     public function store(StoreRequest $request)
