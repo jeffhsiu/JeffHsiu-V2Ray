@@ -39,7 +39,8 @@ class UpdateDockerMonitorShell extends Command
      */
     public function handle()
     {
-        $servers = Server::all();
+        $servers = Server::where('status' , '<>', Server::STATUS_DISABLE)
+			->get();
 
         foreach ($servers as $server) {
             $username = 'root';

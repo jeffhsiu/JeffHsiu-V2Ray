@@ -31,6 +31,11 @@ class Server extends Model
     // VPS提供商 Linode
     const PROVIDER_LINODE = 4;
 
+	// 啟用
+	const STATUS_ENABLE = 1;
+	// 停用
+	const STATUS_DISABLE = 2;
+
     /*
     |--------------------------------------------------------------------------
     | FUNCTIONS
@@ -102,4 +107,9 @@ class Server extends Model
             $this->attributes['ssh_pwd'] = encrypt($value);
         }
     }
+
+	public function setRemarkAttribute($value)
+	{
+		$this->attributes['remark'] = empty($value) ? '' : $value;
+	}
 }

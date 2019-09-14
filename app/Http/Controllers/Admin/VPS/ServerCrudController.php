@@ -52,6 +52,15 @@ class ServerCrudController extends CrudController
                     Server::PROVIDER_LINODE => 'Linode',
                 ],
             ],
+			[
+				'name' => 'status',
+				'label' => 'Status',
+				'type' => 'select_from_array',
+				'options' => [
+					Server::STATUS_ENABLE => 'Enable',
+					Server::STATUS_DISABLE => 'Disable',
+				],
+			],
             [
                 'name' => 'ip', // The db column name
                 'label' => 'IP', // Table column heading
@@ -92,6 +101,15 @@ class ServerCrudController extends CrudController
                     Server::PROVIDER_LINODE => 'Linode',
                 ],
             ],
+			[
+				'name' => 'status',
+				'label' => 'Status',
+				'type' => 'radio',
+				'options' => [
+					Server::STATUS_ENABLE => 'Enable',
+					Server::STATUS_DISABLE => 'Disable',
+				],
+			],
             [
                 'name' => 'ip', // The db column name
                 'label' => 'IP', // Table column heading
@@ -233,6 +251,10 @@ class ServerCrudController extends CrudController
             Alert::error("Server dose not exists. <br/> Please check the server's setting.")->flash();
             return redirect()->back();
         }
+		if ($server->status == Server::STATUS_DISABLE) {
+			Alert::error("Server disabled. <br/> Can not connect...")->flash();
+			return redirect()->back();
+		}
         $username = 'root';
         $password = $server->ssh_pwd;
         $ip = $server->ip;
@@ -674,6 +696,7 @@ class ServerCrudController extends CrudController
         $paginate = Server::selectRaw('server.id AS server_id, COUNT(server.id) as count' )
             ->leftJoin(DB::raw('(SELECT server_id FROM `order` WHERE status IN ('.Order::STATUS_ENABLE.','.Order::STATUS_EXPIRED.')) AS o '),
                 'server.id', '=', 'o.server_id')
+			->where('server.status', Server::STATUS_ENABLE)
             ->groupBy('server.id')
             ->orderBy('count')
             ->paginate(5);

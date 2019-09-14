@@ -48,16 +48,20 @@ class CheckOrderEndDate extends Command
             ->get();
 
         foreach ($orders as $order) {
-
-            echo '訂單使用日到期，用戶:'.$order->customer->name.'，IP:'.$order->server->ip.'，Docker:'.$order->docker_name.PHP_EOL;
-
             $server = Server::find($order->server_id);
             if ( !$server) {
                 Log::error('Server dose not exists. order_id:' . $order->id . ', server_id:'.$order->server_id);
                 continue;
             }
+			if ($server->status == Server::STATUS_DISABLE) {
+				Log::info('Server disable, then set order disable too, order_id:' . $order->id . ', server_id:'.$order->server_id);
+				$order->update(['status' => Order::STATUS_DISABLE]);
+				continue;
+			}
 
-            $param = array();
+			echo '訂單使用日到期，用戶:'.$order->customer->name.'，IP:'.$order->server->ip.'，Docker:'.$order->docker_name.PHP_EOL;
+
+			$param = array();
             $param['username'] = 'root';
             $param['password'] = $server->ssh_pwd;
             $param['ip'] = $server->ip;
@@ -133,16 +137,20 @@ class CheckOrderEndDate extends Command
             ->get();
 
         foreach ($orders as $order) {
-
-            echo '訂單流量重置，用戶:'.$order->customer->name.'，IP:'.$order->server->ip.'，Docker:'.$order->docker_name.PHP_EOL;
-
             $server = Server::find($order->server_id);
             if ( !$server) {
                 Log::error('Server dose not exists. order_id:' . $order->id . ', server_id:'.$order->server_id);
                 continue;
             }
+            if ($server->status == Server::STATUS_DISABLE) {
+				Log::info('Server disable, then set order disable too, order_id:' . $order->id . ', server_id:'.$order->server_id);
+				$order->update(['status' => Order::STATUS_DISABLE]);
+            	continue;
+			}
 
-            $param = array();
+			echo '訂單流量重置，用戶:'.$order->customer->name.'，IP:'.$order->server->ip.'，Docker:'.$order->docker_name.PHP_EOL;
+
+			$param = array();
             $param['username'] = 'root';
             $param['password'] = $server->ssh_pwd;
             $param['ip'] = $server->ip;
