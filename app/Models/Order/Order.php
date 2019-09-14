@@ -100,6 +100,20 @@ class Order extends Model
     | ACCESORS
     |--------------------------------------------------------------------------
     */
+	public function getStatusStringAttribute()
+	{
+		switch ($this->status) {
+			case self::STATUS_ENABLE:
+				return 'Enable ';
+			case self::STATUS_DISABLE:
+				return 'Disable';
+			case self::STATUS_EXPIRED:
+				return 'Expired';
+			default:
+				return '';
+		}
+	}
+
     public function getTypeStringAttribute()
     {
         switch ($this->type) {

@@ -105,6 +105,14 @@
                             </tr>
                             <tr>
                                 <td>
+                                    <strong>Status</strong>
+                                </td>
+                                <td>
+                                    {{ $order->status_string }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
                                     <strong>Type</strong>
                                 </td>
                                 <td>
