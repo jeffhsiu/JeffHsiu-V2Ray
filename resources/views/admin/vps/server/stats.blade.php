@@ -152,6 +152,7 @@
                                             @endif
                                             <a data-toggle="modal" data-target="#confirmModal"
                                                data-action="redo" data-container="{{ $docker['container_id'] }}" data-docker-name="{{ $docker['name'] }}"
+                                               data-port="{{ $docker['port'] }}"
                                                class="btn btn-xs btn-default confirm-modal">
                                                 <i class="fa fa-refresh"></i> Redo
                                             </a>
@@ -256,6 +257,12 @@
                         <input type="hidden" name="docker_name" value="">
                         <h4 class="padding-10"></h4>
                         <h5 style="padding-left: 30px;"></h5>
+                        <div id="port-div">
+                            <label style="margin: 10px; margin-top: 20px">Port: </label>
+                            <input type="number" class="form-control" name="port" min="1024" max="65535" placeholder="1024 ~ 65535"
+                                   style="display: inline-block; width: 200px;">
+                            <span class="text-danger m-l-5"></span>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <div id="loading" class="ld-over-full-inverse">
@@ -320,7 +327,7 @@
             });
 
             $(document).on("click", ".confirm-modal", function() {
-                var action = $(this).data('action');
+                action = $(this).data('action');
                 var url = "{{ backpack_url('vps/server/docker') }}";
                 $(".modal-title").html("Docker " + capitalizeFirstLetter(action));
                 $(".modal-body h4").html("Are you sure you want to " + capitalizeFirstLetter(action) + " the docker?");
@@ -330,13 +337,24 @@
                 $('input[name="docker_name"]').val($(this).data('docker-name'));
                 if (action == "redo") {
                     $(".modal-body h5").html("The associated user orders wiil be set to Disable and the config will be renewed.");
+                    $("#port-div span").text("");
+                    $('input[name="port"]').val($(this).data('port'));
+                    $("#port-div").show();
                 } else {
                     $(".modal-body h5").html("");
+                    $("#port-div").hide();
                 }
             });
 
             $("#modalSubmit").click(function (e) {
                 e.preventDefault();
+                if (action == "redo") {
+                    var port = $('input[name="port"]').val();
+                    if (port < 1024 || port > 65535) {
+                        $("#port-div span").text("Port can only be set between 1024 ~ 65535.");
+                        return;
+                    }
+                }
                 $('#loading').toggleClass('running');
                 $('#modalSubmit').attr('disabled', true);
                 $('#dockerActionForm').submit();

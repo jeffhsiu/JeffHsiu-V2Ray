@@ -553,7 +553,7 @@ class ServerCrudController extends CrudController
             ->orderBy('end_date', 'desc')
             ->first();
 
-        // 供應商只能操作自己的訂單
+        // 分銷商只能操作自己的訂單
         if (auth()->user()->hasRole('Distributor')) {
             if ( !$order || auth()->user()->distributor->id != $order->distributor_id) {
                 return abort(403);
@@ -576,7 +576,12 @@ class ServerCrudController extends CrudController
         if (in_array($server->account->account, config('account.diff_port'))) {
             $begin_port = 5550;
         }
-        $port = $begin_port + $index;
+        $port = $request->port ?: $begin_port + $index;
+		if ($port < 1024 || $port > 65535) {
+			Alert::error("Port can only be set between 1024 ~ 65535.")->flash();
+			return redirect()->back();
+		}
+
         $container_id = $request->container_id;
         $path = storage_path("v2ray/account/$ip");
         $command = "bash $shell $ip $port $index $path";
