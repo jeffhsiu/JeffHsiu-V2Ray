@@ -58,7 +58,7 @@ class ServerCrudController extends CrudController
 				'type' => 'select_from_array',
 				'options' => [
 					Server::STATUS_ENABLE => 'Enable',
-					Server::STATUS_DISABLE => 'Disable',
+					Server::STATUS_DISABLE => '<span class="text-red text-bold">Disable</span>',
 				],
 			],
             [

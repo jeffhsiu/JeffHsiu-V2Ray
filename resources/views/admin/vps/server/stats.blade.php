@@ -261,7 +261,7 @@
                             <label style="margin: 10px; margin-top: 20px">Port: </label>
                             <input type="number" class="form-control" name="port" min="1024" max="65535" placeholder="1024 ~ 65535"
                                    style="display: inline-block; width: 200px;">
-                            <span class="text-danger m-l-5"></span>
+                            <span class="text-red m-l-5"></span>
                         </div>
                     </div>
                     <div class="modal-footer">
