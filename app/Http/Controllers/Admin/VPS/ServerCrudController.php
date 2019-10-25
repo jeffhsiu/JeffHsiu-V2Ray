@@ -698,8 +698,8 @@ class ServerCrudController extends CrudController
     {
         $data = array();
         $servers = array();
-        $paginate = Server::selectRaw('server.id AS server_id, COUNT(server.id) as count' )
-            ->leftJoin(DB::raw('(SELECT server_id FROM `order` WHERE status IN ('.Order::STATUS_ENABLE.','.Order::STATUS_EXPIRED.')) AS o '),
+        $paginate = Server::selectRaw('server.id AS server_id, COUNT(server.id) as count')
+            ->leftJoin(DB::raw('(SELECT distinct docker_name, server_id FROM `order` WHERE status IN ('.Order::STATUS_ENABLE.','.Order::STATUS_EXPIRED.')) AS o '),
                 'server.id', '=', 'o.server_id')
 			->where('server.status', Server::STATUS_ENABLE)
             ->groupBy('server.id')

@@ -190,9 +190,11 @@ class CheckOrderEndDate extends Command
 
             echo 'Docker 已重啟'.PHP_EOL;
         }
+        return true;
     }
 
     private function sshDockerAction($param, $action) {
+        $net = '';
         try {
             $connection = ssh2_connect($param['ip'], $param['port']);
             ssh2_auth_password($connection, $param['username'], $param['password']);

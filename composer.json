@@ -15,7 +15,8 @@
         "barryvdh/laravel-elfinder": "^0.4.2",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.8.*",
-        "laravel/tinker": "^1.0"
+        "laravel/tinker": "^1.0",
+        "ext-ssh2": "*"
     },
     "require-dev": {
         "backpack/generators": "^1.2",
