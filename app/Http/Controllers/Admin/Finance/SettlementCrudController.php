@@ -122,6 +122,10 @@ class SettlementCrudController extends CrudController
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
+        $data['admin_costs'] = Cost::selectRaw('user_id, SUM(amount) as amount')
+            ->where('status', Cost::STATUS_UNSETTLED)
+            ->groupBy('user_id')
+            ->get();
         $data['total_cost'] = Cost::where('status', Cost::STATUS_UNSETTLED)
             ->sum('amount');
         $data['net_profit'] = $data['total_revenue'] - $data['total_cost'];

@@ -61,7 +61,7 @@
                         @endif
                         <hr>
                         <div style="text-align: right;">
-                            <span class="text-muted margin-r-5">Total:</span>
+                            <span class="text-muted margin-r-5">Total revenue:</span>
                             <strong class="text-green">¥</strong>
                             <strong class="text-green" style="font-size: 3rem; margin-right: 20px">{{ $total_revenue }}</strong>
                         </div>
@@ -85,6 +85,7 @@
                             <tr>
                                 <th>Title</th>
                                 <th>Descript</th>
+                                <th>Admin User</th>
                                 <th>Date</th>
                                 <th>Amount</th>
                             </tr>
@@ -94,6 +95,7 @@
                                 <tr>
                                     <td>{{ $cost->title }}</td>
                                     <td>{{ $cost->descript }}</td>
+                                    <td>{{ $cost->user->name }}</td>
                                     <td>{{ $cost->date_notime }}</td>
                                     <td>¥ {{ $cost->amount }}</td>
                                 </tr>
@@ -105,7 +107,7 @@
                     @endif
                     <hr>
                     <div style="text-align: right;">
-                        <span class="text-muted margin-r-5">Total:</span>
+                        <span class="text-muted margin-r-5">Total cost:</span>
                         <strong class="text-red">¥</strong>
                         <strong class="text-red" style="font-size: 3rem; margin-right: 20px">{{ $total_cost }}</strong>
                     </div>
@@ -119,6 +121,16 @@
                     </h4>
                 </div>
                 <div class="box-body no-border">
+                    @foreach($admin_costs as $admin_cost)
+                        <p class="text-center" style="font-size: 2.4rem">
+                            Pay cost
+                            <strong class="text-red m-l-5 m-r-5"><small>¥</small> {{ $admin_cost->amount + 0 }}</strong>
+                            to <strong class="text-primary">{{ $admin_cost->user->name }}</strong>
+                        </p>
+                    @endforeach
+                    @if(count($admin_costs))
+                        <hr>
+                    @endif
                     <p class="text-center" style="font-size: 2.4rem">Revenue - Cost = Net Profit</p>
                     <p class="text-center" style="font-size: 3rem">
                         <strong class="text-green"><small>¥</small> {{ $total_revenue + 0}}</strong> -
@@ -129,7 +141,7 @@
                     <div style="text-align: right;">
                         <span class="text-muted margin-r-5">Net Profit:</span>
                         <strong class="text-yellow">¥</strong>
-                        <strong class="text-yellow" style="font-size: 3rem; margin-right: 20px">{{  number_format($net_profit, 2) }}</strong>
+                        <strong class="text-yellow" style="font-size: 3rem; margin-right: 20px">{{ number_format($net_profit, 2) }}</strong>
                     </div>
                     <button data-toggle="modal" data-target="#confirmModal"
                             class="btn btn-warning" style="display:block; margin: 0 auto;">
