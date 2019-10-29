@@ -53,6 +53,11 @@ class Cost extends Model
         return $this->belongsTo('App\Models\Finance\Settlement');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

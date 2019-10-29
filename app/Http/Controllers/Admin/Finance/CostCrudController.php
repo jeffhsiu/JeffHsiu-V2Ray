@@ -46,6 +46,15 @@ class CostCrudController extends CrudController
                 'type' => 'text',
             ],
             [
+                // 1-n relationship
+                'name' => 'user_id', // the column that contains the ID of that connected entity;
+                'label' => 'Admin User', // Table column heading
+                'type' => 'select',
+                'entity' => 'user', // the method that defines the relationship in your Model
+                'attribute' => 'name', // foreign key attribute that is shown to user
+                'model' => 'App\User', // foreign key model
+            ],
+            [
                 'name' => 'status',
                 'label' => 'Status',
                 'type' => 'select_from_array',
@@ -87,6 +96,14 @@ class CostCrudController extends CrudController
                 'name' => 'descript',
                 'label' => 'Descript',
                 'type' => 'text',
+            ],
+            [  // Select2
+                'name' => 'user_id', // the db column for the foreign key
+                'label' => 'Admin User',
+                'type' => 'select2-notnull',
+                'entity' => 'user', // the method that defines the relationship in your Model
+                'attribute' => 'name', // foreign key attribute that is shown to user
+                'model' => 'App\User', // foreign key model
             ],
             [ // image
                 'name' => 'image',
@@ -131,6 +148,8 @@ class CostCrudController extends CrudController
             function() { // if the filter is active
                 $this->crud->addClause('where', 'settlement_id', 0);
             });
+
+        $this->crud->orderBy('created_at', 'desc');
 
         $this->crud->allowAccess('show');
 
