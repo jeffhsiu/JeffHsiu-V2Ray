@@ -38,12 +38,7 @@ class AccountCrudController extends CrudController
                 'name' => 'provider',
                 'label' => 'Provider',
                 'type' => 'select_from_array',
-                'options' => [
-                    Server::PROVIDER_GOOGLE => 'Google Cloud',
-                    Server::PROVIDER_BANDWAGON => 'Bandwagon',
-                    Server::PROVIDER_HOSTWINDS => 'HostWinds',
-                    Server::PROVIDER_LINODE => 'Linode',
-                ],
+                'options' => Server::getProvidersMap()
             ],
             [
                 'name' => 'account',
@@ -63,12 +58,7 @@ class AccountCrudController extends CrudController
                 'name' => 'provider',
                 'label' => 'Provider',
                 'type' => 'select2_from_array',
-                'options' => [
-                    Server::PROVIDER_GOOGLE => 'Google Cloud',
-                    Server::PROVIDER_BANDWAGON => 'Bandwagon',
-                    Server::PROVIDER_HOSTWINDS => 'HostWinds',
-                    Server::PROVIDER_LINODE => 'Linode',
-                ],
+                'options' => Server::getProvidersMap()
             ],
             [
                 'name' => 'account',

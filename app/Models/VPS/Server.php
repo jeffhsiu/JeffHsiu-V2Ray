@@ -5,6 +5,10 @@ namespace App\Models\VPS;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\CrudTrait;
 
+/**
+ * @property mixed provider
+ * @property mixed ssh_pwd
+ */
 class Server extends Model
 {
     use CrudTrait;
@@ -30,6 +34,8 @@ class Server extends Model
     const PROVIDER_HOSTWINDS = 3;
     // VPS提供商 Linode
     const PROVIDER_LINODE = 4;
+    // VPS提供商 DigitalOcean
+    const PROVIDER_DIGITALOCEAN = 5;
 
 	// 啟用
 	const STATUS_ENABLE = 1;
@@ -78,20 +84,15 @@ class Server extends Model
         return decrypt($value);
     }
 
-    public function getProviderStringAttribute()
+    public static function getProvidersMap()
     {
-        switch ($this->provider) {
-            case self::PROVIDER_GOOGLE:
-                return 'Google Cloud';
-            case self::PROVIDER_BANDWAGON:
-                return 'Bandwagon';
-            case self::PROVIDER_HOSTWINDS:
-                return 'HostWinds';
-            case self::PROVIDER_LINODE:
-                return 'Linode';
-            default:
-                return '';
-        }
+        return [
+            Server::PROVIDER_GOOGLE => 'Google Cloud',
+            Server::PROVIDER_BANDWAGON => 'Bandwagon',
+            Server::PROVIDER_HOSTWINDS => 'HostWinds',
+            Server::PROVIDER_LINODE => 'Linode',
+            Server::PROVIDER_DIGITALOCEAN => 'DigitalOcean',
+        ];
     }
 
     /*

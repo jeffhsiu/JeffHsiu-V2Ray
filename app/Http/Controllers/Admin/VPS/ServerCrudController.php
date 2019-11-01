@@ -45,12 +45,7 @@ class ServerCrudController extends CrudController
                 'name' => 'provider',
                 'label' => 'Provider',
                 'type' => 'select_from_array',
-                'options' => [
-                    Server::PROVIDER_GOOGLE => 'Google Cloud',
-                    Server::PROVIDER_BANDWAGON => 'Bandwagon',
-                    Server::PROVIDER_HOSTWINDS => 'HostWinds',
-                    Server::PROVIDER_LINODE => 'Linode',
-                ],
+                'options' => Server::getProvidersMap()
             ],
 			[
 				'name' => 'status',
@@ -94,12 +89,7 @@ class ServerCrudController extends CrudController
                 'name' => 'provider',
                 'label' => 'Provider',
                 'type' => 'select2_from_array',
-                'options' => [
-                    Server::PROVIDER_GOOGLE => 'Google Cloud',
-                    Server::PROVIDER_BANDWAGON => 'Bandwagon',
-                    Server::PROVIDER_HOSTWINDS => 'HostWinds',
-                    Server::PROVIDER_LINODE => 'Linode',
-                ],
+                'options' => Server::getProvidersMap()
             ],
 			[
 				'name' => 'status',
@@ -162,12 +152,8 @@ class ServerCrudController extends CrudController
             'name' => 'provider',
             'label'=> 'Provider',
             'type' => 'dropdown',
-        ], [
-            Server::PROVIDER_GOOGLE => 'Google Cloud',
-            Server::PROVIDER_BANDWAGON => 'Bandwagon',
-            Server::PROVIDER_HOSTWINDS => 'HostWinds',
-            Server::PROVIDER_LINODE => 'Linode',
-        ], function($value) { // if the filter is active
+        ], Server::getProvidersMap(),
+            function($value) { // if the filter is active
             $this->crud->addClause('where', 'provider', $value);
         });
         $this->crud->addFilter([
@@ -261,23 +247,7 @@ class ServerCrudController extends CrudController
         $port = $server->ssh_port;
         $data = array();
         $data['ip'] = $ip;
-        switch ($server->provider) {
-            case Server::PROVIDER_GOOGLE:
-                $data['provider'] = 'Google Cloud';
-                break;
-            case Server::PROVIDER_BANDWAGON:
-                $data['provider'] = 'Bandwagon';
-                break;
-            case Server::PROVIDER_HOSTWINDS:
-                $data['provider'] = 'HostWinds';
-                break;
-            case Server::PROVIDER_LINODE:
-                $data['provider'] = 'Linode';
-                break;
-            default:
-                $data['provider'] = 'UnKnonw';
-                break;
-        }
+        $data['provider'] = Server::getProvidersMap()[$server->provider];
         $data['server_id'] = $server->id;
         $data['end_date'] = strstr($server->end_date, ' ', true);
         $data['remark'] = $server->remark;
