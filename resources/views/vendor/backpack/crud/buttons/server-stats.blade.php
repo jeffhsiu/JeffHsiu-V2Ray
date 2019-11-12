@@ -3,7 +3,7 @@
         <i class="fa fa-safari"></i> Stats
     </button>
 @else
-    <a class="btn btn-xs btn-default" href="{{ backpack_url('order/order?server_id='.$entry->ip) }}">
+    <a class="btn btn-xs btn-default" href="{{ backpack_url('order/order?server_id='.$entry->ip.'&status='.\App\Models\VPS\Server::STATUS_ENABLE) }}">
         <i class="fa fa-files-o"></i> Orders
     </a>
 @endif
