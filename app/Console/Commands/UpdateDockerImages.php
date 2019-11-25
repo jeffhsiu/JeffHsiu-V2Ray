@@ -6,21 +6,21 @@ use App\Models\VPS\Server;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class UpdateDockerMonitorShell extends Command
+class UpdateDockerImages extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'shell:update-monitor';
+    protected $signature = 'docker:update-images';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Update servers docker monitor shell.';
+    protected $description = 'Update servers docker images.';
 
     /**
      * Create a new command instance.
@@ -53,20 +53,20 @@ class UpdateDockerMonitorShell extends Command
                 $connection = ssh2_connect($ip, $port);
                 ssh2_auth_password($connection, $username, $password);
 
-                echo "Updating docker monitor shell...".PHP_EOL;
-                $stream = ssh2_exec($connection, 'wget --no-cache -O /etc/v2ray/docker-monitor.sh https://git.io/fjnF8 2>&1');
+                echo "Updating docker images...".PHP_EOL;
+                $stream = ssh2_exec($connection, 'docker pull v2ray/official');
                 stream_set_blocking($stream, true);
                 $stream_out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
                 echo stream_get_contents($stream_out);
                 fclose($stream);
-                echo "Update success.".PHP_EOL.PHP_EOL;
+                echo "Update success.".PHP_EOL;
 
                 ssh2_exec($connection, 'exit');
                 unset($connection);
 
             } catch (\Exception $exception) {
                 echo $exception->getMessage().PHP_EOL;
-                Log::error('Update shell failed. error: '.$exception->getMessage());
+                Log::error('Update docker images failed. error: '.$exception->getMessage());
                 continue;
             }
         }
