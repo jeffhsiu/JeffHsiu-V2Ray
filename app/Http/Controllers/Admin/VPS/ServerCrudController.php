@@ -78,6 +78,11 @@ class ServerCrudController extends CrudController
                 'format' => 'YYYY-MM-DD', // use something else than the base.default_datetime_format config value
             ],
             [
+                'name' => 'ws_host', // The db column name
+                'label' => 'WS Host', // Table column heading
+                'type' => 'text',
+            ],
+            [
                 'name' => 'remark', // The db column name
                 'label' => 'Remark', // Table column heading
                 'type' => 'text',
@@ -137,6 +142,11 @@ class ServerCrudController extends CrudController
                 ],
                 'allows_null' => true,
                 // 'default' => '2017-05-12 11:59:59',
+            ],
+            [
+                'name' => 'ws_host', // The db column name
+                'label' => 'WS Host', // Table column heading
+                'type' => 'text',
             ],
             [
                 'name' => 'remark', // The db column name
@@ -542,7 +552,9 @@ class ServerCrudController extends CrudController
         $ssh_user = 'root';
         $ssh_pwd = $server->ssh_pwd;
         $index = substr($request->docker_name, -2);
+        $host = $server->ws_host;
         $begin_port = 15550;
+        // 部分不能改防火牆的server
         if (in_array($server->account->account, config('account.diff_port'))) {
             $begin_port = 5550;
         }
@@ -554,7 +566,7 @@ class ServerCrudController extends CrudController
 
         $container_id = $request->container_id;
         $path = storage_path("v2ray/account/$ip");
-        $command = "bash $shell $ip $port $index $path";
+        $command = "bash $shell $ip $port $index $path $host";
 
         try {
             shell_exec("$command 2>&1");

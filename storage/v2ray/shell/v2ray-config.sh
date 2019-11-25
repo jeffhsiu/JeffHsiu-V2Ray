@@ -5,6 +5,7 @@ ip="$1"
 port="$2"
 index="$3"
 path="$4"
+host="$5"
 alter_id=100
 v2ray_id=$(uuidgen | tr "[:upper:]" "[:lower:]")
 
@@ -12,63 +13,74 @@ create_v2ray_config()
 {
 	cat << EOF > /usr/local/etc/v2ray/config.json
 {
-    "log": {
-        "access": "/var/log/v2ray/access.log",
-        "error": "/var/log/v2ray/error.log",
-        "loglevel": "warning"
-    },
-    "inbound": {
+    "inbounds": [
+    {
         "port": ${port},
         "protocol": "vmess",
         "settings": {
             "clients": [
+            {
+                "id": "${v2ray_id}",
+                "alterId": ${alter_id}
+            }
+            ]
+        },
+        "streamSettings": {
+            "network": "ws",
+            "security": "tls",
+            "tlsSettings": {
+                "serverName": "${host}",
+                "allowInsecure": true,
+                "certificates": [
                 {
-                    "id": "${v2ray_id}",
-                    "level": 1,
-                    "alterId": ${alter_id}
+                    "certificateFile": "/etc/v2ray/ssl/*.jeffhsiu.com_chain.crt",
+                    "keyFile": "/etc/v2ray/ssl/*.jeffhsiu.com_key.key"
                 }
+                ]
+            },
+            "wsSettings": {
+                "path": "/",
+                "headers": {}
+            }
+        },
+        "tag": "",
+        "sniffing": {
+            "enabled": true,
+            "destOverride": [
+            "http",
+            "tls"
             ]
         }
-    },
-    "outbound": {
+    }
+    ],
+    "outbounds": [
+    {
         "protocol": "freedom",
         "settings": {}
     },
-    "inboundDetour": [],
-    "outboundDetour": [
-        {
-            "protocol": "blackhole",
-            "settings": {},
-            "tag": "blocked"
-        }
+    {
+        "protocol": "blackhole",
+        "settings": {},
+        "tag": "blocked"
+    }
     ],
     "routing": {
-        "strategy": "rules",
-        "settings": {
-            "rules": [
-                {
-                    "type": "field",
-                    "ip": [
-                        "0.0.0.0/8",
-                        "10.0.0.0/8",
-                        "100.64.0.0/10",
-                        "127.0.0.0/8",
-                        "169.254.0.0/16",
-                        "172.16.0.0/12",
-                        "192.0.0.0/24",
-                        "192.0.2.0/24",
-                        "192.168.0.0/16",
-                        "198.18.0.0/15",
-                        "198.51.100.0/24",
-                        "203.0.113.0/24",
-                        "::1/128",
-                        "fc00::/7",
-                        "fe80::/10"
-                    ],
-                    "outboundTag": "blocked"
-                }
-            ]
+        "rules": [
+        {
+            "ip": [
+            "geoip:private"
+            ],
+            "outboundTag": "blocked",
+            "type": "field"
+        },
+        {
+            "outboundTag": "blocked",
+            "protocol": [
+            "bittorrent"
+            ],
+            "type": "field"
         }
+        ]
     }
 }
 EOF
@@ -78,17 +90,19 @@ create_vmess_URL_config()
 {
 	cat << EOF > /usr/local/etc/v2ray/vmess_qr.json
 {
-	"v": "2",
-	"ps": "${index}-wechat:fastrabbit666",
-	"add": "${ip}",
-	"port": "${port}",
-	"id": "${v2ray_id}",
-	"aid": "${alter_id}",
-	"net": "tcp",
-	"type": "none",
-	"host": "",
-	"path": "",
-	"tls": ""
+    "v": "2",
+    "ps": "${index}-wechat:fastrabbit666",
+    "add": "${ip}",
+    "port": "${port}",
+    "id": "${v2ray_id}",
+    "aid": "${alter_id}",
+    "net": "ws",
+    "type": "none",
+    "host": "${host}",
+    "path": "/",
+    "tls": "tls",
+    "method": "auto",
+    "allowInsecure": true
 }
 EOF
 }
@@ -119,7 +133,7 @@ export_config()
  端口 (Port) = ${port}
  用户ID (User ID / UUID) = ${v2ray_id}
  額外ID (Alter Id) = ${alter_id}
- 傳輸協議 (Network) = tcp
+ 傳輸協議 (Network) = ws + tls
  偽裝類型 (header type) = none
 ------------------ END ------------------
 
