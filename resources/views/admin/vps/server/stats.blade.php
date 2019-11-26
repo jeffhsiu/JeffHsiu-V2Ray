@@ -53,6 +53,14 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>
+                                        <strong>Host</strong>
+                                    </td>
+                                    <td>
+                                        {{ $ws_host }}
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td><strong>Mem</strong></td>
                                     <td>
                                         -

@@ -257,6 +257,7 @@ class ServerCrudController extends CrudController
         $port = $server->ssh_port;
         $data = array();
         $data['ip'] = $ip;
+        $data['ws_host'] = $server->ws_host;
         $data['provider'] = Server::getProvidersMap()[$server->provider];
         $data['server_id'] = $server->id;
         $data['end_date'] = strstr($server->end_date, ' ', true);

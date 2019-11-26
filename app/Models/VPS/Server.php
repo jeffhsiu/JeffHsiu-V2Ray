@@ -113,4 +113,9 @@ class Server extends Model
 	{
 		$this->attributes['remark'] = empty($value) ? '' : $value;
 	}
+
+    public function setWsHostAttribute($value)
+    {
+        $this->attributes['ws_host'] = empty($value) ? '' : $value;
+    }
 }
