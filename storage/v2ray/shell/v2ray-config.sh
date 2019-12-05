@@ -104,8 +104,10 @@ create_vmess_URL_config()
     "method": "auto",
     "allowInsecure": true,
     "security": "tls",
-    "tlsSettings": {
-        "allowInsecure": true
+    "streamSettings": {
+        "tlsSettings": {
+                "allowInsecure": true
+            }
     }
 }
 EOF
