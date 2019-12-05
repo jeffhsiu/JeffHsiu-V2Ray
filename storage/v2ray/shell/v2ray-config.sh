@@ -102,7 +102,12 @@ create_vmess_URL_config()
     "path": "/",
     "tls": "tls",
     "method": "auto",
-    "allowInsecure": true
+    "allowInsecure": true,
+    "security": "tls",
+    "tlsSettings": {
+        "allowInsecure": true
+        },
+    }
 }
 EOF
 }
@@ -135,6 +140,9 @@ export_config()
  額外ID (Alter Id) = ${alter_id}
  傳輸協議 (Network) = ws + tls
  偽裝類型 (header type) = none
+ 域名 (host) = ${host}
+ 路徑 (path) = /
+ TLS允許不安全 (allowInsecure) = true
 ------------------ END ------------------
 
 
