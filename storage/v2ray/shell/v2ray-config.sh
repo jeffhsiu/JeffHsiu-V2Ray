@@ -106,7 +106,6 @@ create_vmess_URL_config()
     "security": "tls",
     "tlsSettings": {
         "allowInsecure": true
-        },
     }
 }
 EOF
