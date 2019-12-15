@@ -209,6 +209,7 @@ class ServerCrudController extends CrudController
         }
 
         $this->crud->orderBy('id', 'desc');
+        $this->crud->orderBy('status', 'asc');
 
         // add asterisk for fields that are required in ServerRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');
