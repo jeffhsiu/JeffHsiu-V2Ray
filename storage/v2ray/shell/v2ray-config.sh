@@ -100,10 +100,10 @@ create_vmess_URL_config()
     "type": "none",
     "host": "${host}",
     "path": "/",
-    "tls": "tls",
+    "tls": true,
     "method": "auto",
     "allowInsecure": true,
-    "security": "tls"
+    "security": "auto"
 }
 EOF
 }
