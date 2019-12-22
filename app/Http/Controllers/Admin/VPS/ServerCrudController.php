@@ -329,7 +329,7 @@ class ServerCrudController extends CrudController
                     }
 
                     $status = '';
-                    $i = array_search('Exited', $ps);
+                    $i = array_search('Exited', $ps) ?: array_search('Created', $ps) ?: count($ps)-2;
                     $end = count($ps) - 1;
                     while($i != $end) {
                         $status .= $ps[$i].' ';
