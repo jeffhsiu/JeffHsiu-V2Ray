@@ -313,7 +313,7 @@ class ServerCrudController extends CrudController
                     }
 
                     $docker = array(
-                        'container_id' => $ps[0],
+                        'container_id' => $ps[0] ?? '',
                         'created' => $created,
                         'status' => $status,
                         'port' => substr($ps[$i],strpos($ps[$i],':')+1,strpos($ps[$i],'-')-strpos($ps[$i],':')-1),
@@ -322,7 +322,7 @@ class ServerCrudController extends CrudController
                 } else {  //Docker停用狀態
                     $created = '';
                     $i = 4;
-                    $end = array_search('Exited', $ps);
+                    $end = array_search('Exited', $ps) ?: array_search('Created', $ps) ?: count($ps);
                     while($i != $end) {
                         $created .= $ps[$i].' ';
                         $i++;
@@ -337,7 +337,7 @@ class ServerCrudController extends CrudController
                     }
 
                     $docker = array(
-                        'container_id' => $ps[0],
+                        'container_id' => $ps[0] ?? '',
                         'created' => $created,
                         'status' => $status,
                         'port' => '-',
