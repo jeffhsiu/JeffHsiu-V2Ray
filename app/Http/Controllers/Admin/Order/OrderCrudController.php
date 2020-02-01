@@ -201,18 +201,7 @@ class OrderCrudController extends CrudController
                 'name' => 'docker_name', // The db column name
                 'label' => 'Docker Name', // Table column heading
                 'type' => 'select2_from_array',
-                'options' => [
-                    'v2ray-01' => 'v2ray-01',
-                    'v2ray-02' => 'v2ray-02',
-                    'v2ray-03' => 'v2ray-03',
-                    'v2ray-04' => 'v2ray-04',
-                    'v2ray-05' => 'v2ray-05',
-                    'v2ray-06' => 'v2ray-06',
-                    'v2ray-07' => 'v2ray-07',
-                    'v2ray-08' => 'v2ray-08',
-                    'v2ray-09' => 'v2ray-09',
-                    'v2ray-10' => 'v2ray-10',
-                ],
+                'options' => getDockerNameList(15),
                 'default' => Request::has('docker_name') ? Request::get('docker_name') : 'v2ray-01'
             ],
             [
@@ -317,18 +306,7 @@ class OrderCrudController extends CrudController
             'name' => 'docker_name',
             'label'=> 'Docker',
             'type' => 'dropdown',
-        ], [
-            'v2ray-01' => 'v2ray-01',
-            'v2ray-02' => 'v2ray-02',
-            'v2ray-03' => 'v2ray-03',
-            'v2ray-04' => 'v2ray-04',
-            'v2ray-05' => 'v2ray-05',
-            'v2ray-06' => 'v2ray-06',
-            'v2ray-07' => 'v2ray-07',
-            'v2ray-08' => 'v2ray-08',
-            'v2ray-09' => 'v2ray-09',
-            'v2ray-10' => 'v2ray-10',
-        ],
+        ], getDockerNameList(15),
             function($value) { // if the filter is active
                 $this->crud->addClause('where', 'docker_name', $value);
             });

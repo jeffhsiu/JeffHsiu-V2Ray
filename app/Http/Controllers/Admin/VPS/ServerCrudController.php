@@ -692,8 +692,9 @@ class ServerCrudController extends CrudController
 
         foreach ($paginate as $item) {
             $server = Server::find($item->server_id);
+            $docker_count = getProviderDockerCount($server->provider);
             $dockers = array();
-            for ($i = 1; $i <= 10; $i++) {
+            for ($i = 1; $i <= $docker_count; $i++) {
                 $docker_name = 'v2ray-'.str_pad($i,2,"0",STR_PAD_LEFT);
                 $order = Order::where('server_id', $server->id)
                     ->where('docker_name', $docker_name)
