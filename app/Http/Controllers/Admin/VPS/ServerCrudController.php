@@ -688,7 +688,7 @@ class ServerCrudController extends CrudController
 			->where('server.status', Server::STATUS_ENABLE)
             ->groupBy('server.id')
             ->orderBy('count')
-            ->paginate(10);
+            ->paginate(50);
 
         foreach ($paginate as $item) {
             $server = Server::find($item->server_id);
