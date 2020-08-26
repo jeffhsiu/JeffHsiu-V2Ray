@@ -208,8 +208,8 @@ class ServerCrudController extends CrudController
             $this->crud->denyAccess('delete');
         }
 
-        $this->crud->orderBy('id', 'desc');
         $this->crud->orderBy('status', 'asc');
+        $this->crud->orderBy('id', 'desc');
 
         // add asterisk for fields that are required in ServerRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');
@@ -313,7 +313,7 @@ class ServerCrudController extends CrudController
                     }
 
                     $docker = array(
-                        'container_id' => $ps[0],
+                        'container_id' => $ps[0] ?? '',
                         'created' => $created,
                         'status' => $status,
                         'port' => substr($ps[$i],strpos($ps[$i],':')+1,strpos($ps[$i],'-')-strpos($ps[$i],':')-1),
@@ -322,14 +322,14 @@ class ServerCrudController extends CrudController
                 } else {  //Docker停用狀態
                     $created = '';
                     $i = 4;
-                    $end = array_search('Exited', $ps);
+                    $end = array_search('Exited', $ps) ?: array_search('Created', $ps) ?: count($ps);
                     while($i != $end) {
                         $created .= $ps[$i].' ';
                         $i++;
                     }
 
                     $status = '';
-                    $i = array_search('Exited', $ps);
+                    $i = array_search('Exited', $ps) ?: array_search('Created', $ps) ?: count($ps)-2;
                     $end = count($ps) - 1;
                     while($i != $end) {
                         $status .= $ps[$i].' ';
@@ -337,7 +337,7 @@ class ServerCrudController extends CrudController
                     }
 
                     $docker = array(
-                        'container_id' => $ps[0],
+                        'container_id' => $ps[0] ?? '',
                         'created' => $created,
                         'status' => $status,
                         'port' => '-',
@@ -688,12 +688,13 @@ class ServerCrudController extends CrudController
 			->where('server.status', Server::STATUS_ENABLE)
             ->groupBy('server.id')
             ->orderBy('count')
-            ->paginate(10);
+            ->paginate(50);
 
         foreach ($paginate as $item) {
             $server = Server::find($item->server_id);
+            $docker_count = getProviderDockerCount($server->provider);
             $dockers = array();
-            for ($i = 1; $i <= 10; $i++) {
+            for ($i = 1; $i <= $docker_count; $i++) {
                 $docker_name = 'v2ray-'.str_pad($i,2,"0",STR_PAD_LEFT);
                 $order = Order::where('server_id', $server->id)
                     ->where('docker_name', $docker_name)

@@ -3,6 +3,7 @@
  * Custom helpers function
  */
 
+use App\Models\VPS\Server;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -28,5 +29,46 @@ if (! function_exists('wechatPush')) {
                 Log::error('Wechat push error:'.$e->getMessage());
             }
         }
+    }
+}
+
+/**
+ * 取得 Docker Name List
+ * @param int $count
+ * @return array
+ * @author Jeff Lin
+ */
+if (! function_exists('getDockerNameList')) {
+    function getDockerNameList($count = 10)
+    {
+        $list = [];
+        for ($i = 1; $i <= $count; $i++) {
+            $docker_name = 'v2ray-'.str_pad($i, 2, "0", STR_PAD_LEFT);
+            $list[$docker_name] = $docker_name;
+        }
+
+        return $list;
+    }
+}
+
+/**
+ * 取得 Provider Docker Count
+ * @param $provider
+ * @return mixed
+ * @author Jeff Lin
+ */
+if (! function_exists('getProviderDockerCount')) {
+
+    function getProviderDockerCount($provider)
+    {
+        $provider_docker_count = [
+            Server::PROVIDER_GOOGLE => 10,
+            Server::PROVIDER_BANDWAGON => 10,
+            Server::PROVIDER_HOSTWINDS => 15,
+            Server::PROVIDER_LINODE => 15,
+            Server::PROVIDER_DIGITALOCEAN => 15,
+        ];
+
+        return $provider_docker_count[$provider];
     }
 }

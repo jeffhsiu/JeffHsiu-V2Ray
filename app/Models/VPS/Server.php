@@ -84,6 +84,11 @@ class Server extends Model
         return decrypt($value);
     }
 
+    public function getProviderStringAttribute()
+    {
+        return self::getProvidersMap()[$this->provider];
+    }
+
     public static function getProvidersMap()
     {
         return [
