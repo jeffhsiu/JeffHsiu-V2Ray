@@ -90,7 +90,7 @@ class ServerLogCrudController extends CrudController
                 'name' => "created_at", // The db column name
                 'label' => "Create Date", // Table column heading
                 'type' => "datetime-null",
-                'format' => "YYYY-MM-DD hh:m:s", // use something else than the base.default_datetime_format config value
+                'format' => "YYYY-MM-DD HH:mm:ss", // use something else than the base.default_datetime_format config value
             ],
         ]);
 
