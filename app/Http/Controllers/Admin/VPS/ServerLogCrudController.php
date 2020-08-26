@@ -94,6 +94,39 @@ class ServerLogCrudController extends CrudController
             ],
         ]);
 
+        $this->crud->addFilter([
+            'name' => 'ip',
+            'label'=> 'IP',
+            'type' => 'text',
+        ], false,
+            function($value) { // if the filter is active
+                $this->crud->addClause('where', 'ip', 'LIKE', "%$value%");
+            });
+        $this->crud->addFilter([
+            'name' => 'docker_name',
+            'label'=> 'Docker',
+            'type' => 'dropdown',
+        ], [
+            'v2ray-01' => 'v2ray-01',
+            'v2ray-02' => 'v2ray-02',
+            'v2ray-03' => 'v2ray-03',
+            'v2ray-04' => 'v2ray-04',
+            'v2ray-05' => 'v2ray-05',
+            'v2ray-06' => 'v2ray-06',
+            'v2ray-07' => 'v2ray-07',
+            'v2ray-08' => 'v2ray-08',
+            'v2ray-09' => 'v2ray-09',
+            'v2ray-10' => 'v2ray-10',
+            'v2ray-11' => 'v2ray-11',
+            'v2ray-12' => 'v2ray-12',
+            'v2ray-13' => 'v2ray-13',
+            'v2ray-14' => 'v2ray-14',
+            'v2ray-15' => 'v2ray-15',
+        ],
+            function($value) { // if the filter is active
+                $this->crud->addClause('where', 'docker_name', $value);
+            });
+
         $this->crud->orderBy('id', 'desc');
 
         $this->crud->removeAllButtons();

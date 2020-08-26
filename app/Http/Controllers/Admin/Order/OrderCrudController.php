@@ -328,6 +328,11 @@ class OrderCrudController extends CrudController
             'v2ray-08' => 'v2ray-08',
             'v2ray-09' => 'v2ray-09',
             'v2ray-10' => 'v2ray-10',
+            'v2ray-11' => 'v2ray-11',
+            'v2ray-12' => 'v2ray-12',
+            'v2ray-13' => 'v2ray-13',
+            'v2ray-14' => 'v2ray-14',
+            'v2ray-15' => 'v2ray-15',
         ],
             function($value) { // if the filter is active
                 $this->crud->addClause('where', 'docker_name', $value);
