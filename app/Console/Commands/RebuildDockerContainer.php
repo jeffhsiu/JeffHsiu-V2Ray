@@ -58,7 +58,7 @@ class RebuildDockerContainer extends Command
             echo "Connecting $ip ...".PHP_EOL;
             $connection = ssh2_connect($ip, $port);
             ssh2_auth_password($connection, $username, $password);
-            echo "Connect success".PHP_EOL;
+            echo "Connect success.".PHP_EOL;
 
             echo "Get Docker Status...".PHP_EOL;
             $stream = ssh2_exec($connection, 'docker ps -a');
@@ -74,25 +74,33 @@ class RebuildDockerContainer extends Command
                     $config = file(storage_path("v2ray/account/$ip/config-$indexString.txt"), FILE_IGNORE_NEW_LINES);
                     $dockerPort = substr(strchr($config[2], '='), 2);
 
-                    echo "indexString: $indexString".PHP_EOL;
+                    echo "Docker name: $dockerName".PHP_EOL;
 
                     if (in_array('Up', $ps)) {
                         $active = true;
-                        echo 'Docker 啟用狀態'.PHP_EOL;
+                        echo 'Docker status: 啟用'.PHP_EOL;
                     } else {
                         $active = false;
-                        echo 'Docker 停用狀態'.PHP_EOL;
+                        echo 'Docker status: 停用'.PHP_EOL;
                     }
 
                     $dockerRunCommand = "docker run -d --name=v2ray-$indexString -v /etc/v2ray:/etc/v2ray \
                     -p $dockerPort:$dockerPort --memory=80M --restart=always v2ray/official  \
                     v2ray -config=/etc/v2ray/config-$indexString.json";
-                    echo 'Docker run Command'. $dockerRunCommand . PHP_EOL . PHP_EOL;
+                    echo 'Docker run command: '.$dockerRunCommand.PHP_EOL;
 
-//                    ssh2_exec($connection, 'docker rm -f '.$dockerName);
-//                    ssh2_exec($connection, "docker run -d --name=v2ray-$indexString -v /etc/v2ray:/etc/v2ray \
-//                    -p $dockerPort:$dockerPort --memory=80M --restart=always v2ray/official  \
-//                    v2ray -config=/etc/v2ray/config-$indexString.json");
+                    ssh2_exec($connection, 'docker rm -f '.$dockerName);
+                    echo 'Docker removed.'.PHP_EOL;
+                    ssh2_exec($connection, $dockerRunCommand);
+
+                    echo 'Docker run success.'.PHP_EOL;
+
+                    if (!$active) {
+                        ssh2_exec($connection, 'docker stop '.$dockerName);
+                        echo 'Docker stopped.'.PHP_EOL;
+                    }
+
+                    echo PHP_EOL;
                 }
             }
 
