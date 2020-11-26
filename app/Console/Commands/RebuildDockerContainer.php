@@ -45,7 +45,7 @@ class RebuildDockerContainer extends Command
             ->where('ip', $ip)
 			->first();
         if (!$server) {
-            echo 'The server disabled.'.PHP_EOL;
+            echo 'The server disabled or not exist.'.PHP_EOL;
             return;
         }
 
@@ -68,8 +68,11 @@ class RebuildDockerContainer extends Command
             foreach ($docker_ps as $key => $value) {
                 if ($key >= 1 && !empty($value)) {
                     $ps = array_values(array_filter(explode(' ', $value)));
-                    $name = end($ps);
-                    $indexString = substr($name, 6);
+                    $dockerName = end($ps);
+                    $indexString = substr($dockerName, 6);
+
+                    $config = file(storage_path("v2ray/account/$ip/config-$indexString.txt"), FILE_IGNORE_NEW_LINES);
+                    dd($config);
 
                     echo "indexString: $indexString".PHP_EOL;
 
@@ -80,6 +83,11 @@ class RebuildDockerContainer extends Command
                         $active = false;
                         echo 'Docker 停用狀態'.PHP_EOL;
                     }
+
+                    ssh2_exec($connection, 'docker rm -f '.$dockerName);
+                    ssh2_exec($connection, "docker run -d --name=v2ray-$indexString -v /etc/v2ray:/etc/v2ray \
+                    -p $port:$port --memory=80M --restart=always v2ray/official  \
+                    v2ray -config=/etc/v2ray/config-$indexString.json");
                 }
             }
 
