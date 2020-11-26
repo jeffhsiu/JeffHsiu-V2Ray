@@ -72,7 +72,7 @@ class RebuildDockerContainer extends Command
                     $indexString = substr($dockerName, 6);
 
                     $config = file(storage_path("v2ray/account/$ip/config-$indexString.txt"), FILE_IGNORE_NEW_LINES);
-                    dd($config);
+                    $dockerPort = substr(strchr($config[2], '='), 2);
 
                     echo "indexString: $indexString".PHP_EOL;
 
@@ -84,10 +84,15 @@ class RebuildDockerContainer extends Command
                         echo 'Docker 停用狀態'.PHP_EOL;
                     }
 
-                    ssh2_exec($connection, 'docker rm -f '.$dockerName);
-                    ssh2_exec($connection, "docker run -d --name=v2ray-$indexString -v /etc/v2ray:/etc/v2ray \
-                    -p $port:$port --memory=80M --restart=always v2ray/official  \
-                    v2ray -config=/etc/v2ray/config-$indexString.json");
+                    $dockerRunCommand = "docker run -d --name=v2ray-$indexString -v /etc/v2ray:/etc/v2ray \
+                    -p $dockerPort:$dockerPort --memory=80M --restart=always v2ray/official  \
+                    v2ray -config=/etc/v2ray/config-$indexString.json";
+                    echo 'Docker run Command'. $dockerRunCommand . PHP_EOL . PHP_EOL;
+
+//                    ssh2_exec($connection, 'docker rm -f '.$dockerName);
+//                    ssh2_exec($connection, "docker run -d --name=v2ray-$indexString -v /etc/v2ray:/etc/v2ray \
+//                    -p $dockerPort:$dockerPort --memory=80M --restart=always v2ray/official  \
+//                    v2ray -config=/etc/v2ray/config-$indexString.json");
                 }
             }
 
